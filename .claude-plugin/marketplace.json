@@ -35,7 +35,7 @@
     {
       "name": "reports",
       "source": "./plugins/reports",
-      "description": "Academic reports: report-review gives feedback only as tracked changes and comments, in Claude Code or inside Word.",
+      "description": "Academic reports in Word or LaTeX, only with suggestions: report-new, report-improve, report-review, and report-improve-word and report-review-word inside Word.",
       "category": "productivity"
     }
   ]

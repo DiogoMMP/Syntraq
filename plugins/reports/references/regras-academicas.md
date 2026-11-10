@@ -8,6 +8,7 @@ Estas regras valem para o texto do documento. O tom da conversa com o utilizador
 
 - Português de Portugal (PT-PT). Sinalizar termos do português do Brasil: "usuário" (utilizador), "arquivo" (ficheiro), "tela" (ecrã), "time" (equipa), "acessar" (aceder), "rodar" (executar), "deletar" (apagar), "baixar" (descarregar), "gerenciar" (gerir), "ótimo" no sentido de "bom", gerúndio em vez de "a" + infinitivo ("estamos fazendo" em vez de "estamos a fazer").
 - Termos técnicos em inglês só quando não há tradução corrente. Em itálico na primeira ocorrência, se o template o fizer.
+- Siglas e acrónimos por extenso na primeira utilização, com a sigla entre parênteses, e só a sigla daí em diante. Se o documento tiver lista de siglas, cada sigla usada tem de lá estar e cada entrada tem de ser usada.
 - Se o documento estiver noutra língua, a regra passa a ser coerência com a língua do documento. Não se traduz nada.
 
 ## 2. Voz e tempo verbal
@@ -54,6 +55,7 @@ Estas marcas denunciam o texto. Sinalizar todas.
 - Citações diretas e ideias de um autor trazem nome e ano.
 - Estilo de referências: o que o documento ou o perfil indicar. Se não houver nenhum, IEEE.
 - Nunca inventar uma referência, um DOI ou uma citação. Se uma fonte não puder ser confirmada, comentário a pedir confirmação.
+- Quando uma referência tem DOI e há acesso à web, confirmar que o DOI existe e que o título e os autores batem certo. Um DOI que não resolve ou aponta para outro trabalho é um erro. Sem acesso à web, dizer no resumo que os DOIs ficaram por confirmar.
 - Gestor de referências: se o utilizador usa o Mendeley, as referências entram pelo Mendeley Cite. Sugerir a inserção por aí em vez de escrever referências à mão.
 - Nunca citar nem ligar a ficheiros locais do utilizador (caminhos de disco, pastas pessoais).
 
@@ -76,6 +78,12 @@ Em LaTeX: compilar duas vezes, confirmar que não há `??` nem avisos de referê
 - Capa, logos e identificação conforme o perfil de quem entrega.
 - Ortografia e termos do português do Brasil.
 - Referências: citadas, completas e no estilo certo.
+
+## 10. Enunciado e limites
+
+- Se houver enunciado, rubrica ou grelha de avaliação (dado pelo utilizador ou encontrado na base de conhecimento), cada critério é verificado: cumprido, parcial ou em falta, com o sítio do relatório onde é tratado.
+- Limites de páginas ou de palavras, do enunciado ou do perfil: contar e dizer quanto falta ou sobra. Indicar o que conta para o limite (normalmente sem capa, índices, referências e anexos, salvo indicação em contrário).
+- Sem enunciado nem limites conhecidos, não se inventa nenhum. Diz-se no resumo que não foram verificados.
 
 ## Precedência
 
