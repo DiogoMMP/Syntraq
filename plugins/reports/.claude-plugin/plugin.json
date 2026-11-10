@@ -1,7 +1,7 @@
 {
   "name": "reports",
   "description": "Academic reports in Word or LaTeX, never writing straight into the user's text: start a report from the user's template with the right logos (report-new), draft sections as suggestions (report-improve) and review with tracked changes and comments (report-review), plus report-improve-word and report-review-word for use inside Word through the Claude add-in.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "Diogo Pereira",
     "email": "diogopereira812@gmail.com"
