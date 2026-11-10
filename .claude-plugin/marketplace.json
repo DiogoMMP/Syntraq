@@ -31,6 +31,12 @@
       "source": "./plugins/study",
       "description": "Study skills on top of a research knowledge base: exam-map, study-summary, mock-exam, solve-exam, correct-attempt, quiz, flashcards, study-plan.",
       "category": "productivity"
+    },
+    {
+      "name": "reports",
+      "source": "./plugins/reports",
+      "description": "Academic reports: report-review gives feedback only as tracked changes and comments, in Claude Code or inside Word.",
+      "category": "productivity"
     }
   ]
 }

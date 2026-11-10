@@ -1,0 +1,9 @@
+{
+  "name": "reports",
+  "description": "Academic report skills: review a report with suggestions and comments only, never writing straight into the text (report-review), in Claude Code or inside Word through the Claude add-in.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Diogo Pereira",
+    "email": "diogopereira812@gmail.com"
+  }
+}
