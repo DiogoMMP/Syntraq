@@ -158,8 +158,9 @@ Delete sections that genuinely do not apply — an empty section kept is noise. 
 
 1. The path of the approved spec, `docs/changes/<type>/<PREFIX><NNNN>-<slug>/README.md`, and the instruction to read it in full first, then the project's conventions file (`CLAUDE.md` / `AGENTS.md` / `CONTRIBUTING.md`) — which outranks the rules below on every technical question.
 2. The working directory and branch it must be on (it checks `git branch --show-current`; wrong branch → it stops and reports, never creates one).
-3. **The text of this skill's Phases 3, 4 and 5, verbatim** (everything from this heading up to Phase 6), as its operating instructions — including the `RESULT.md` structure and the index update — plus one line: *you were given only this spec; if it is ambiguous or contradicts the code, stop and report what is unclear instead of guessing.*
-4. The prohibitions: no commit, no push, no PR, no edits to the README, nothing outside §3's scope.
+3. **The text of this skill from the line "Implement **the phases of §3, in order**" through the end of Phase 5, verbatim** — and **not** the paragraphs above it (the "You do not implement… launch one agent" instructions are addressed to you, not to the delegate, and would make it refuse or delegate again). It includes the `RESULT.md` structure and the index update. Add one line: *you were given only this spec; if it is ambiguous or contradicts the code, stop and report what is unclear instead of guessing.*
+4. The prohibitions: no commit, no push, no PR, no edits to the README, no code changes outside §3's scope. The scope limit does **not** cover the records this skill requires: `RESULT.md` beside the README, the type's index row and, when applicable, the defect-ledger entry and the conventions file (Phase 5) — those are required, not out of scope.
+5. Before launching, record two baselines for your own Phase 6 check: a hash of the approved README (`git hash-object <README>`) and the working-tree state (`git status --short --untracked-files=all`).
 
 Do **not** paste your investigation notes, the user's original wording, or "what the user really meant". If the agent comes back saying the spec is ambiguous, that is a defect in the spec: fix the README with the user (back to the gate in Phase 2, then a **new** fresh agent), do not answer the agent from memory.
 
@@ -219,7 +220,7 @@ Write `docs/changes/<type>/<PREFIX><NNNN>-<slug>/RESULT.md` — **added beside t
 
 ## Phase 6 — Verify the delegate, then report (the main agent again)
 
-The agent's report is its claim, not proof. Before reporting, check on disk: `RESULT.md` exists beside the README; `git status --short` matches the "Inventory of changes" in it and shows nothing outside §3's scope; the README is unchanged apart from the approval state (`git diff` on it); the index row exists; and re-run the project's gate yourself (or at least build and tests) when it is cheap. Anything that does not match goes into the report as a discrepancy — never smooth it over.
+The agent's report is its claim, not proof. Before reporting, check on disk: `RESULT.md` exists beside the README; `git status --short --untracked-files=all` (so new directories are listed file by file), compared with the baseline taken before delegation so pre-existing changes are not blamed on the delegate, matches the "Inventory of changes" in it and shows nothing outside §3's scope apart from the required records; the README's `git hash-object` equals the hash recorded before delegation (not `git diff`, which cannot see an untracked file or the approved version); the index row exists; and re-run the project's gate yourself (or at least build and tests) when it is cheap. Anything that does not match goes into the report as a discrepancy — never smooth it over.
 
 Short and factual:
 

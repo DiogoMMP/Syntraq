@@ -55,7 +55,7 @@
 
 ## 🔗 Issues relacionadas
 
-<!-- PR para a main: "Closes #123" fecha a issue ao fazer merge. PR para a develop: uma linha "Testing: #123" (a issue segue para Testing ao fazer merge e só fecha quando chegar à main). Links para tarefas (Jira, Trello), etc. -->
+<!-- PR para a main: "Closes #123" fecha a issue ao fazer merge. PR para a develop: uma linha "Testing: #123" (só move a issue para Testing ao fazer merge se o repositório tiver automação que leia essa linha; caso contrário, move-se à mão; a issue só fecha quando chegar à main). Links para tarefas (Jira, Trello), etc. -->
 
 ---
 

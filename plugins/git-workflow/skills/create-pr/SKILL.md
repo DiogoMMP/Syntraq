@@ -171,7 +171,12 @@ Rules:
 
 ### Link the issues — by target branch
 
-Collect the issues this PR concerns: the number in the branch slug, any `#N` / issue URL in the commits (`git log origin/<base>..HEAD --format=%B`), in the `docs/changes/` records the branch touches, and in the conversation. **Only issues that exist** (`gh issue view N`) — never guess a number. Then the wording depends on where the PR goes:
+Collect the *candidate* issues: the number in the branch slug, any `#N` / issue URL in the commits (`git log origin/<base>..HEAD --format=%B`), in the `docs/changes/` records the branch touches, and in the conversation. Then filter them:
+
+- **Same repository only.** For a URL or `owner/repo#N`, compare the owner/repo with `gh repo view --json nameWithOwner -q .nameWithOwner`. An issue of another repository is never written as a bare `#N` and never gets a closing keyword from here — cross-repo, use the full form `owner/repo#N` and ask the user whether it should close at all. Validate a local one with `gh issue view N` — and never guess a number.
+- **Addressed, not merely mentioned.** A commit or record can cite an issue as context without resolving it. Check each candidate against what the branch actually does: only an issue the PR resolves (or, for `develop`, delivers into Testing) is listed. When the relationship is unclear, ask with `AskUserQuestion` rather than assume — a wrong `Closes` closes someone's issue for good.
+
+Then the wording depends on where the PR goes:
 
 | PR target | In the body (issues section) | What happens on merge |
 | --- | --- | --- |
@@ -183,7 +188,7 @@ Collect the issues this PR concerns: the number in the branch slug, any `#N` / i
 
 **This skill never moves an issue.** Testing happens **on merge**, not when the PR is opened, and it is done by the repo's own automation: the `Testing: #N` line is the contract. The skill only writes that line.
 
-- **Check whether the repo has the Action:** `grep -rl "Testing:" .github/workflows/ 2>/dev/null`. If none matches, still write the line, but say in the gate and in the report that the repo has no workflow reading it, so the issues must be moved to Testing by hand after the merge. Do not offer to move them, do not touch labels, project statuses or the issues themselves, and do not create the workflow (offer it only if the user asks — it would be a separate change for `commit-push`).
+- **Check whether the repo has the Action — by behaviour, not by the literal marker:** `grep -rl "Testing:" .github/workflows/ 2>/dev/null` only finds candidates. Open each match and confirm it triggers on `pull_request` closed/merged (with the base branch `develop`) **and** actually moves the issues (sets a project status, adds a label, or similar). A file that merely contains the text — a comment, an unrelated job — does not count. If no workflow passes that check, still write the line, but say in the gate and in the report that the repo has no workflow reading it, so the issues must be moved to Testing by hand after the merge. Do not offer to move them, do not touch labels, project statuses or the issues themselves, and do not create the workflow (offer it only if the user asks — it would be a separate change for `commit-push`).
 - **One line, once.** The marker line appears a single time in the body, in the issues section, never in the title.
 
 **Last line** — after everything the template produced, separated by a blank line:
@@ -214,7 +219,7 @@ Print in chat, verbatim:
 
 Then ask for validation with `AskUserQuestion` ("Abro o PR assim?" → **"Sim, abre o PR"** / **"Não, quero alterar"**) and **end the turn**. Do not run `gh pr create` in this turn.
 
-Accept edits: if the user changes the title, the body, the base or a checkbox, re-show the revised proposal and wait again.
+Accept edits: if the user changes the title, the body or a checkbox, re-show the revised proposal and wait again. **If the user changes the base**, the earlier work was done against the old one: re-run Step 1's diff commands against the new base, re-run Step 2b (`code-analyst`) when the diff differs, and recompute the issue handling of Step 4 (a switch between `main` and `develop` flips `Closes` and `Testing:`) before re-showing the proposal.
 
 On approval, open it with a heredoc so the markdown survives intact:
 
