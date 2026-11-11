@@ -32,7 +32,7 @@ def main() -> int:
             if not dst.is_file() or read(src) != read(dst):
                 stale.append(f"{target.name}/{name}")
                 if not args.check:
-                    dst.write_bytes(src.read_bytes())
+                    dst.write_bytes(read(src))
 
     if args.check:
         if stale:

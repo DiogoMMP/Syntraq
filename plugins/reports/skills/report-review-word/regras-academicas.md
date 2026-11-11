@@ -15,6 +15,7 @@ Estas regras valem para o texto do documento. O tom da conversa com o utilizador
 
 - Texto impessoal. Nunca primeira pessoa: "eu fiz", "vou apresentar", "apresentamos", "posso concluir". Escreve-se "O projeto é implementado", "É possível concluir", "Segue-se a apresentação".
 - Presente. Nem passado nem futuro: "foi implementado", "vai ser testado", "concluiu-se" passam a "é implementado", "é testado", "conclui-se".
+- A reescrita mantém o sentido temporal. Um plano não pode passar a parecer feito: o que é mesmo futuro (trabalho futuro, cronograma, testes ainda por fazer) escreve-se no presente sem mudar o estado, por exemplo "vai ser testado" passa a "está previsto testar" ou "o cronograma prevê", nunca a "é testado". Na dúvida sobre se algo já aconteceu, `[Dúvida]` em vez de reescrever.
 - Exceção razoável: o que um autor publicou num ano concreto. Tratar como sugestão de baixa gravidade, não como erro.
 
 ## 3. Objetividade e ritmo
@@ -52,8 +53,9 @@ Estas marcas denunciam o texto. Sinalizar todas.
 ## 7. Citações e referências
 
 - Cada citação no texto tem entrada na lista de referências e cada entrada é citada.
-- Citações diretas e ideias de um autor trazem nome e ano.
 - Estilo de referências: o que o documento ou o perfil indicar. Se não houver nenhum, IEEE.
+- A forma da citação no texto segue o estilo. Em IEEE, número entre parênteses retos (`[3]`), por ordem de primeira citação; o nome do autor pode aparecer na frase ("Silva [3] mostra que..."), mas não é obrigatório. Em estilos autor-data (APA, Harvard), autor e ano ("Silva, 2021"). Não marcar como erro uma citação correta no estilo em uso.
+- Se o orientador ou o curso pedir mais do que o estilo (por exemplo nome e ano junto de cada citação mesmo em IEEE, "Silva (2021) [3]"), essa é uma regra do perfil e sobrepõe-se a esta.
 - Nunca inventar uma referência, um DOI ou uma citação. Se uma fonte não puder ser confirmada, comentário a pedir confirmação.
 - Quando uma referência tem DOI e há acesso à web, confirmar que o DOI existe e que o título e os autores batem certo. Um DOI que não resolve ou aponta para outro trabalho é um erro. Sem acesso à web, dizer no resumo que os DOIs ficaram por confirmar.
 - Gestor de referências: se o utilizador usa o Mendeley, as referências entram pelo Mendeley Cite. Sugerir a inserção por aí em vez de escrever referências à mão.

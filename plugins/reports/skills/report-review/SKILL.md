@@ -44,7 +44,7 @@ If this skill has no file or command tools, or the document is open in Word and 
 
 6. **Mark the document**, in a copy (the whole project folder for LaTeX), following `revisao-docx.md` or `revisao-latex.md`: tracked change or `changes` macro for the proposed wording, comment for the reason. Each comment starts with `[Erro]`, `[Sugestão]` or `[Dúvida]`, names the rule and says why in one line. Do not rewrite the author's argument or tone; fix what the rules cover and ask about the rest.
 
-7. **Verify before delivering.** Rejecting every change must give back the original text: for a `.docx` as `revisao-docx.md` explains, for LaTeX with `python ../../scripts/tex_changes.py check <original> <copy>` on each changed file (run it from the skill's folder or use the plugin's path). Anything that fails stays out and is reported.
+7. **Verify before delivering.** Rejecting every change must give back the original text: for a `.docx` as `revisao-docx.md` explains, for LaTeX with `python <plugin>/scripts/tex_changes.py check <original> <copy>` on each changed file, using the script's full path as `revisao-latex.md` says. Anything that fails stays out and is reported.
 
 8. **Close the review.** In a `.docx`, lift the editing restriction: if the document had one, or if one was used to force tracked changes, remove it from the copy at the end, as `revisao-docx.md` explains; with a password, say so and tell the user to stop it in Word; leave track changes on. In LaTeX, tell the user how to accept or reject everything with `tex_changes.py` or one by one by hand.
 

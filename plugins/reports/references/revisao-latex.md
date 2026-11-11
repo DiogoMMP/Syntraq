@@ -11,13 +11,14 @@ O equivalente das alterações controladas do Word é o pacote `changes`: as sug
 
 ## Marcas
 
-Pacote `changes`, uma linha no preâmbulo da cópia, com o marcador no fim para ser removida depois:
+Pacote `changes` em modo `draft` (o modo `final` esconde as marcas no PDF) e um autor de revisão definido, para os `id=C` compilarem. Duas linhas no preâmbulo da cópia, cada uma com o marcador no fim para ser removida depois:
 
 ```latex
-\usepackage[final]{changes} % reports-review
+\usepackage[draft]{changes} % reports-review
+\definechangesauthor[name={Claude}, color=orange]{C} % reports-review
 ```
 
-Se o documento já usar o pacote com outras opções, reutilizar a linha existente e não duplicar. Se a classe não deixar carregar o pacote, usar o ficheiro de revisão em Markdown (ver o fim).
+**Se o original já usar o pacote `changes`** (carrega-o ou tem `\added`, `\deleted`, `\replaced`, `\comment` ou `\highlight` no texto), não se marca: usa-se o ficheiro de revisão em Markdown (ver o fim). Caso contrário, aceitar ou rejeitar a cópia resolvia também as marcas do autor. O mesmo se a classe não deixar carregar o pacote.
 
 | Macro | Uso |
 | :--- | :--- |
@@ -42,13 +43,15 @@ Se o documento já usar o pacote com outras opções, reutilizar a linha existen
 
 ## Verificação antes de entregar
 
-1. `python scripts/tex_changes.py check <original> <cópia>` para cada ficheiro alterado: rejeitar tudo tem de devolver o original.
+O script está em `scripts/tex_changes.py` dentro da pasta do plugin (dois níveis acima da pasta da skill). Usar sempre o caminho completo do script, nunca relativo à pasta do relatório, e dar esse caminho completo ao utilizador. O script trata **um ficheiro de cada vez**.
+
+1. `python <plugin>/scripts/tex_changes.py check <original> <cópia>` para cada ficheiro alterado: rejeitar tudo tem de devolver o original.
 2. Compilar a cópia, se houver compilador, e confirmar que não há erros novos.
-3. Dizer ao utilizador como decidir:
-   - tudo de uma vez: `python scripts/tex_changes.py accept <ficheiro> -o <saída>` (ou `reject`);
+3. Dizer ao utilizador como decidir, ficheiro a ficheiro:
+   - todas as sugestões de um ficheiro: `python <plugin>/scripts/tex_changes.py accept <ficheiro> -o <saída>` (ou `reject`), repetido para cada ficheiro alterado;
    - uma a uma: editar a macro à mão, ficando com o argumento que quer.
 
-   Ao aceitar, a linha do preâmbulo com `% reports-review` é removida.
+   Tanto `accept` como `reject` removem as linhas do preâmbulo com `% reports-review`.
 
 ## Quando não dá para usar o pacote
 

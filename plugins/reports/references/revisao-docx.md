@@ -33,13 +33,13 @@ Em `word/settings.xml`:
 
 - `<w:trackRevisions/>` liga o controlo de alterações. Ligar na cópia antes de marcar e deixar ligado no fim.
 - `<w:documentProtection w:edit="trackedChanges" w:enforcement="1"/>` força que tudo seja alteração controlada. Pode ser ligado durante a revisão como garantia.
-- **No fim, remover o elemento `w:documentProtection`** (desligar o "Restringir edição").
+- **No fim, remover o elemento `w:documentProtection`** (desligar o "Restringir edição"), mesmo que o original já o tivesse ligado. É intencional: o utilizador quer receber a cópia sem restrições para decidir as sugestões. Dizer no resumo que a proteção foi retirada e de que tipo era.
 - Se o elemento tiver `w:hash`, `w:salt` ou `w:cryptProviderType`, há palavra-passe. Não tentar contornar: dizer ao utilizador para fazer Rever, Restringir Edição, Parar Proteção.
 
 ## Verificação antes de entregar
 
 1. Todo o XML bem formado e o `.docx` abre (reabrir o zip e parsear).
-2. Rejeitar todas as alterações da cópia dá exatamente o texto do original. Comparar o texto por parágrafo.
+2. Rejeitar **só as revisões desta revisão** (`w:author="Claude"`) dá exatamente o texto do original. Fazer isto numa cópia descartável: tirar os `w:ins` do Claude com o conteúdo, desembrulhar os `w:del` do Claude (`w:delText` volta a `w:t`) e tirar os comentários do Claude. As alterações controladas que o original já tinha ficam como estão, e o texto delas lê-se da mesma forma nos dois ficheiros. Comparar parágrafo a parágrafo.
 3. Os `w:id` são únicos e cada comentário tem início, fim e referência.
 4. Sem `w:documentProtection` no fim.
 5. Se for possível, abrir no Word ou converter para PDF para confirmar que não fica corrompido.

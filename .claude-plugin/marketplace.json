@@ -35,7 +35,7 @@
     {
       "name": "reports",
       "source": "./plugins/reports",
-      "description": "Academic reports in Word or LaTeX, only with suggestions: report-new, report-improve, report-review, and report-improve-word and report-review-word inside Word.",
+      "description": "Academic reports in Word or LaTeX: report-improve and report-review only suggest (also as -word skills inside Word); report-new writes the cover and chapter skeleton directly, but only in a new copy of the template.",
       "category": "productivity"
     }
   ]

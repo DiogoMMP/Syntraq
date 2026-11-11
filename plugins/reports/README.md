@@ -2,7 +2,7 @@
 
 Parte do [Syntraq](../../README.md) — *Power up your agents*.
 
-Relatórios académicos (estágio, tese, trabalhos de cadeira), em Word ou LaTeX: começar a partir do teu template, escrever secções e rever. A regra de ouro: **nunca escrevem diretamente no teu texto**. Tudo chega como sugestão e comentário, e és tu a aceitar ou recusar.
+Relatórios académicos (estágio, tese, trabalhos de cadeira), em Word ou LaTeX: começar a partir do teu template, escrever secções e rever. A regra de ouro: **nunca escrevem diretamente no teu texto**. Tudo chega como sugestão e comentário, e és tu a aceitar ou recusar. A única exceção é a `report-new`, que escreve a capa e o esqueleto dos capítulos diretamente, mas só num documento novo criado a partir do template.
 
 ## Instalação
 
@@ -44,7 +44,7 @@ Todas usam a mesma [lista de verificações](references/checklist.md) e as mesma
 
 - Funciona com **Word e LaTeX**. Trabalha sempre numa **cópia**; o original não é tocado.
   - `.docx`: alterações controladas e comentários, que aceitas ou recusas no Word.
-  - LaTeX: copia o projeto inteiro e marca com o pacote `changes` (`\replaced`, `\added`, `\deleted`, `\comment`), que aparece a cores no PDF. Aceitas ou recusas tudo de uma vez com [`scripts/tex_changes.py`](scripts/tex_changes.py), ou uma a uma à mão.
+  - LaTeX: copia o projeto inteiro e marca com o pacote `changes` (`\replaced`, `\added`, `\deleted`, `\comment`), que aparece a cores no PDF. Aceitas ou recusas todas as sugestões de um ficheiro com [`scripts/tex_changes.py`](scripts/tex_changes.py), corrido uma vez por cada ficheiro alterado, ou uma a uma à mão. Se o teu `.tex` já usar o pacote `changes`, a revisão sai num ficheiro `.revisao.md` à parte, para não misturar com as tuas marcas.
   - PDF: só leitura, com a revisão num ficheiro à parte.
 - Regras, por esta ordem: o que pedes no momento, as regras do teu perfil (orientador, curso), o que encontra na tua base de conhecimento, e as [regras académicas por omissão](references/regras-academicas.md).
 - Análises de outras IAs ou de colegas são verificadas contra o texto e entram como sugestão com a origem indicada. Nunca como ordem.

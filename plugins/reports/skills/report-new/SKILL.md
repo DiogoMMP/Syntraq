@@ -33,7 +33,7 @@ If this skill has no file or command tools, stop and say so.
    - They match: keep them.
    - They do not match, or it is unclear: remove them from the new report (the template stays as it was) and ask the user for their institution's and course's logos. Insert them in the same place and size when given. Never fetch logos from the web.
 
-4. **Create the report**: copy the template to the new name and place (the whole folder for LaTeX), then:
+4. **Create the report**: copy the template to the new name and place (the whole folder for LaTeX). A Word template (`.dotx`, or a `.dotm` without its macros) must become a real document, not a renamed template: save the copy as `.docx` and, in `[Content_Types].xml`, change the override for `/word/document.xml` from `application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml` to `application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml`, so Word opens it as a document. Then:
    - fill the cover fields, keeping the template's styles;
    - replace the template's sample body with the chapter skeleton: from the brief or rubric when there is one, otherwise from the usual structure in `../../references/regras-academicas.md` (section 8), adjusted to what the template already has;
    - under each heading, a guidance note: in a `.docx` a Word comment `[A preencher]` with what goes there, in LaTeX a `% [A preencher] ...` comment. No body text;
@@ -41,6 +41,6 @@ If this skill has no file or command tools, stop and say so.
 
 5. **Set up the references.** If the style is not known, ask, with IEEE as the default. In Word with Mendeley, leave the bibliography to Mendeley Cite and add a note saying so. In LaTeX, create or reuse the `.bib` and set the style (`IEEEtran`, or `biblatex` with `style=ieee`, or what was asked). Never cite or link the user's local files.
 
-6. **Verify**: the `.docx` opens (the zip and XML parse), or the LaTeX compiles twice without new errors if a compiler is there; the cover has no leftover template placeholders; the logos are the right ones or removed.
+6. **Verify**: the `.docx` opens (the zip and XML parse) and its `/word/document.xml` content type is the document one, not the template one, or the LaTeX compiles twice without new errors if a compiler is there; the cover has no leftover template placeholders; the logos are the right ones or removed.
 
 7. **Report in the chat**: where the report was created, what was filled, what is pending (logos to send, cover fields left blank, reference style), and that `report-improve` drafts sections and `report-review` reviews them, both as suggestions.
