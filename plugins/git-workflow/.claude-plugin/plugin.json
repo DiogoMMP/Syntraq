@@ -1,7 +1,7 @@
 {
   "name": "git-workflow",
   "description": "Git & GitHub workflow skills: Conventional Commits with GitFlow (commit-push), pull requests from the repo template (create-pr), a parallel code-analyst and address-bot-review.",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "author": {
     "name": "Diogo Pereira",
     "email": "diogopereira812@gmail.com"
