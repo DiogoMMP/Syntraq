@@ -5,9 +5,9 @@
 
 # Syntraq
 
-![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin%20marketplace-D97757?logo=anthropic&logoColor=white) ![Plugins](https://img.shields.io/badge/plugins-4-7C5CFF) ![Skills](https://img.shields.io/badge/skills-21-22D3EE) ![Commits](https://img.shields.io/badge/commits-Conventional-FE5196?logo=conventionalcommits&logoColor=white) ![License](https://img.shields.io/badge/license-MIT-blue)
+![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin%20marketplace-D97757?logo=anthropic&logoColor=white) ![Plugins](https://img.shields.io/badge/plugins-5-7C5CFF) ![Skills](https://img.shields.io/badge/skills-26-22D3EE) ![Commits](https://img.shields.io/badge/commits-Conventional-FE5196?logo=conventionalcommits&logoColor=white) ![License](https://img.shields.io/badge/license-MIT-blue)
 
-Marketplace de plugins para o [Claude Code](https://code.claude.com): skills que levam o agente do pedido à entrega — commits e pull requests com aprovação em cada passo, mudanças implementadas com registo escrito, knowledge bases mantidas por LLM e estudo para exames a partir dessa knowledge base.
+Marketplace de plugins para o [Claude Code](https://code.claude.com): skills que levam o agente do pedido à entrega — commits e pull requests com aprovação em cada passo, mudanças implementadas com registo escrito, knowledge bases mantidas por LLM, estudo para exames a partir dessa knowledge base e relatórios académicos começados a partir do teu template e depois escritos e revistos só com sugestões.
 
 Cada plugin instala-se à parte e tem o seu próprio README com a descrição completa de cada skill.
 
@@ -34,6 +34,7 @@ Adiciona o marketplace uma vez e instala só os plugins que queres:
 /plugin install dev-tools@syntraq
 /plugin install knowledge-base@syntraq
 /plugin install study@syntraq
+/plugin install reports@syntraq
 ```
 
 Para experimentar um plugin a partir de um clone local, sem o instalar:
@@ -87,6 +88,16 @@ claude --plugin-dir ./plugins/dev-tools
 | `flashcards` | Cria flashcards para o Anki |
 | `study-plan` | Faz o plano de estudo, dia a dia, até aos exames |
 
+### [`reports`](plugins/reports/README.md) — Relatórios académicos
+
+| Skill | O que faz |
+| :--- | :--- |
+| `report-new` | Começa um relatório a partir do teu template, com a capa, os logos certos e o esqueleto dos capítulos (a única que escreve diretamente, e só no documento novo) |
+| `report-improve` | Escreve ou desenvolve secções em Word ou LaTeX, só como sugestão |
+| `report-review` | Revê um relatório em Word ou LaTeX no disco só com sugestões e comentários, sem escrever no texto |
+| `report-improve-word` | Escreve secções dentro do Word, sobre o documento aberto |
+| `report-review-word` | A mesma revisão dentro do Word, sobre o documento aberto |
+
 ---
 
 ## Estrutura do repositório
@@ -100,7 +111,7 @@ syntraq/
         ├── .claude-plugin/plugin.json   # nome, descrição e versão do plugin
         ├── README.md                    # as skills do plugin em detalhe
         ├── skills/<skill>/SKILL.md      # cada skill, com templates/ ou reference/ quando precisa
-        └── scripts/                     # scripts partilhados pelas skills (só no study)
+        └── scripts/                     # scripts partilhados pelas skills (study e reports)
 ```
 
 ---
