@@ -55,7 +55,7 @@
 
 ## 🔗 Issues relacionadas
 
-<!-- Usa "Closes #123" para fechar automaticamente. Links para tarefas (Jira, Trello), etc. -->
+<!-- PR para a main: "Closes #123" fecha a issue ao fazer merge. PR para a develop: uma linha "Testing: #123" (a issue segue para Testing ao fazer merge e só fecha quando chegar à main). Links para tarefas (Jira, Trello), etc. -->
 
 ---
 
