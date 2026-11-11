@@ -52,13 +52,14 @@ claude --plugin-dir ./plugins/dev-tools
 | Skill | O que faz |
 | :--- | :--- |
 | `commit-push` | Cria commits (Conventional Commits) e faz push, seguindo GitFlow |
-| `create-pr` | Abre um pull request preenchendo o template do repositório (ou um template por defeito, se não houver) |
+| `create-pr` | Abre um pull request preenchendo o template do repositório (ou um template por defeito, se não houver); fecha as issues na `main`, marca-as com `Testing: #N` na `develop` |
+| `code-analyst` | Analisa o diff de uma branch com vários agentes especializados em paralelo (só leitura); é chamada pelo `create-pr` |
 
 ### [`dev-tools`](plugins/dev-tools/README.md) — Desenvolvimento
 
 | Skill | O que faz |
 | :--- | :--- |
-| `implement-change` | Implementa uma feature, bugfix ou hotfix ponta a ponta, com registo escrito |
+| `implement-change` | Escreve a spec, pergunta se a aceitas e entrega-a a um agente sem contexto que implementa e escreve o `RESULT.md` |
 | `create-readme` | Escreve ou reescreve o README.md raiz no formato da casa |
 | `create-agents-md` | Escreve ou atualiza o `AGENTS.md` do repositório, em conjunto contigo |
 | `clean-architecture` | Cria (ou reorganiza) um projeto em Clean Architecture |
