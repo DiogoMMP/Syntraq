@@ -11,7 +11,7 @@
     {
       "name": "git-workflow",
       "source": "./plugins/git-workflow",
-      "description": "Conventional Commits with GitFlow (commit-push) and pull requests from the repo template (create-pr).",
+      "description": "Conventional Commits with GitFlow (commit-push), pull requests from the repo template (create-pr) and a parallel code-analyst.",
       "category": "development"
     },
     {

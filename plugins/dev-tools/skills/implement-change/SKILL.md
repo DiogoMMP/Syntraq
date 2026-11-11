@@ -1,6 +1,6 @@
 ---
 name: implement-change
-description: "Implement a change (feature, bugfix or hotfix) end to end, in any project and stack, and leave the written record. Takes the request in any form (free text, issue key or URL, wiki page, spec, screenshots, a pasted conversation), turns it into evidence and sets the change type, then: investigate, ask the open decisions, write the full plan as docs/changes/TYPE/PREFIXNNNN-slug/README.md before any code, show a short summary and wait for approval, implement, run the project's verification gate, write RESULT.md with what actually happened, update the type's index and report. Does not commit, push or open a PR (commit-push and create-pr do that). Use when the user wants a feature, bugfix or hotfix implemented, an issue implemented, or work planned and done with its record — e.g. 'implementa esta feature', 'corrige este bug com registo', 'faz este hotfix', 'implementa o ABC-123', 'implement this ticket', 'build this', 'quero acrescentar X'."
+description: "Implement a change (feature, bugfix or hotfix) end to end, in any project and stack, and leave the written record. Takes the request in any form (free text, issue, wiki page, screenshots, pasted conversation), sets the change type, investigates, asks the open decisions, writes the plan as docs/changes/TYPE/PREFIXNNNN-slug/README.md and asks whether the user accepts the spec; then hands ONLY that spec to a fresh agent with no conversation context, which implements it, runs the project's gate and writes RESULT.md; finally verifies and reports. Does not commit, push or open a PR (commit-push and create-pr do that). Use when the user wants a feature, bugfix or hotfix implemented, an issue implemented, or work planned and done with its record — e.g. 'implementa esta feature', 'corrige este bug com registo', 'faz este hotfix', 'implementa o ABC-123', 'implement this ticket', 'build this', 'quero acrescentar X'."
 ---
 
 # Implement Change — plan, build, record
@@ -10,6 +10,8 @@ This skill produces **three things, in this order**, and the order is the point:
 1. `docs/changes/<type>/<PREFIX><NNNN>-<slug>/README.md` — the **spec**, written and approved **before any code**.
 2. The **implementation**.
 3. `docs/changes/<type>/<PREFIX><NNNN>-<slug>/RESULT.md` — what **actually** happened, including the deviations.
+
+**Who does what.** You (the main agent) take the request, investigate, ask, write the spec and get it accepted (Phases 0–2). The implementation, verification and `RESULT.md` (Phases 3–5) are **delegated to a fresh agent that receives nothing but the approved spec** (plus the project's own files it reads itself) — no chat history, no your-side reasoning. That is deliberate: if the README cannot carry the change on its own, the plan was not ready, and it is better to find out from an implementer who has only the page than to have your memory silently fill the gaps. Phase 6 (verify and report) is yours again.
 
 Both documents live in the **same folder**. The same process — plan gate, README before code, RESULT after — applies identically to all three change types below. Urgency is not a reason to skip the record; a hotfix done at 2am is exactly when a written "what and why" matters most.
 
@@ -117,7 +119,7 @@ Map the request onto the codebase before writing a line of the plan. Read the re
 
 1. **Resolve every open decision first.** Use `AskUserQuestion`, one decision at a time, each with a recommendation and its trade-off — which component, behaviour on conflict, whether an existing interface changes or a new one appears. **Do not touch code while a question is open.** Don't draft the README around a guess when a real decision is still open.
 
-2. **Write the full `docs/changes/<type>/<PREFIX><NNNN>-<slug>/README.md` directly — this *is* the plan**, not a chat summary standing in for it. Fill in every section below with the decisions just made. It's a draft until the gate in step 3 approves it, so it's fine to revise it in place if the user asks for changes before that.
+2. **Write the full `docs/changes/<type>/<PREFIX><NNNN>-<slug>/README.md` directly — this *is* the plan**, not a chat summary standing in for it. Fill in every section below with the decisions just made. **Write it so a stranger can build from it alone**: the implementing agent in Phase 3 sees only this file and the repo — no chat, no "as we discussed", no decision that lives only in the conversation. Every decision, every path, every acceptance criterion and every source (issue text, screenshot description, wiki excerpt) the work depends on is in the README itself or in a repo file it names. It's a draft until the gate in step 3 approves it, so it's fine to revise it in place if the user asks for changes before that.
 
 **Where the structure comes from**, in order of preference:
 
@@ -142,19 +144,31 @@ Delete sections that genuinely do not apply — an empty section kept is noise. 
 >
 > Put the **enabling change in its own first phase** — the dependency swap, the config or hook fix, the shared abstraction — then the code that consumes it, then the tests. `commit-push` carries the full mechanics; §6 just has to give it units small enough to work with.
 
-3. **PLAN GATE — show a summary, point at the file, wait.** Post in chat a short summary that fits on one screen: the situation, the key decisions and why, what's deliberately out of scope, and the record's file path. **Do not paste the whole README into chat** — say the full plan is in that file if the user wants to read it in detail. Then ask for explicit approval with `AskUserQuestion` and **end the turn. Do not start Phase 3 while this is open**, and do not touch any code.
+3. **PLAN GATE — show a summary, point at the file, wait.** Post in chat a short summary that fits on one screen: the situation, the key decisions and why, what's deliberately out of scope, and the record's file path. **Do not paste the whole README into chat** — say the full plan is in that file if the user wants to read it in detail. Then **ask whether the user accepts the spec** with `AskUserQuestion` ("Aceitas a spec?" → **"Sim, implementa"** / **"Não, quero alterar"**) and **end the turn. Do not start Phase 3 while this is open**, and do not touch any code. Never treat silence, or an earlier "implementa isto" about the *request*, as acceptance of the *spec* — they have not seen it yet.
 
-4. **Accept edits.** If the user asks to change the plan — from the summary alone, or after opening the file — revise the README itself (it's still a draft) and re-show an updated summary. Only an explicit approval ("ok", "sim", "avança", "implementa") opens the gate to Phase 3.
+4. **Accept edits.** If the user asks to change the plan — from the summary alone, or after opening the file — revise the README itself (it's still a draft) and re-show an updated summary and the question again. Only an explicit acceptance ("sim", "ok", "avança", "implementa") opens the gate to Phase 3. On acceptance, set the README's state to approved (that is the one edit allowed after the gate).
 
 > **Once approved, the README is the spec as approved.** From that point on you do **not** rewrite it to match what happened during implementation. Deviations go in `RESULT.md`. A README edited after approval to match reality stops being a plan and becomes a second, tidier RESULT.
 
 ---
 
-## Phase 3 — Implementation
+## Phase 3 — Implementation (delegated to a fresh agent)
+
+**You do not implement.** Once the spec is accepted, launch **one** agent with the `Agent` tool: `subagent_type: "general-purpose"`, **never `"fork"`** (a fork inherits this conversation, which is exactly what must not happen). Its prompt is built from only these parts, and nothing else from the chat:
+
+1. The path of the approved spec, `docs/changes/<type>/<PREFIX><NNNN>-<slug>/README.md`, and the instruction to read it in full first, then the project's conventions file (`CLAUDE.md` / `AGENTS.md` / `CONTRIBUTING.md`) — which outranks the rules below on every technical question.
+2. The working directory and branch it must be on (it checks `git branch --show-current`; wrong branch → it stops and reports, never creates one).
+3. **The text of this skill from the line "Implement **the phases of §3, in order**" through the end of Phase 5, verbatim** — and **not** the paragraphs above it (the "You do not implement… launch one agent" instructions are addressed to you, not to the delegate, and would make it refuse or delegate again). It includes the `RESULT.md` structure and the index update. Add one line: *you were given only this spec; if it is ambiguous or contradicts the code, stop and report what is unclear instead of guessing.*
+4. The prohibitions: no commit, no push, no PR, no edits to the README, no code changes outside §3's scope. The scope limit does **not** cover the records this skill requires: `RESULT.md` beside the README, the type's index row and, when applicable, the defect-ledger entry and the conventions file (Phase 5) — those are required, not out of scope.
+5. Before launching, record two baselines for your own Phase 6 check: a hash of the approved README (`git hash-object <README>`) and the working-tree state (`git status --short --untracked-files=all`).
+
+Do **not** paste your investigation notes, the user's original wording, or "what the user really meant". If the agent comes back saying the spec is ambiguous, that is a defect in the spec: fix the README with the user (back to the gate in Phase 2, then a **new** fresh agent), do not answer the agent from memory.
+
+*The rest of this phase — through Phase 5 — is written to the delegated agent ("you").*
 
 Implement **the phases of §3, in order**, so each one can be committed and verified on its own. Work along the project's own dependency direction — schema/data first, then the layers that depend on it, tests alongside.
 
-The technical rules are the project's, from the conventions file read in Phase 0.5. What this skill adds on top, and holds everywhere:
+The technical rules are the project's, from the project's conventions file, read first. What this skill adds on top, and holds everywhere:
 
 - **Write the minimum the change needs.** Touch only what §3 says you will touch. Adjacent work worth doing goes to §7 / RESULT, not into this change — this holds even harder for a hotfix, where the smallest diff that fixes the incident is the goal, not a broader cleanup.
 - **Match the surrounding code** — its structure, naming, error handling, logging, comment density and test style.
@@ -169,7 +183,7 @@ If reality diverges from the plan — a phase turns out impossible, a defect blo
 
 ## Phase 4 — Verification
 
-Run **the project's own gate**, the exact commands found in Phase 0.5 — build, then tests, plus lint and typecheck when the repo has them. Never substitute a command the project does not use, and never invent one.
+Run **the project's own gate**, the exact commands the spec's §4 names (confirm they exist in the manifest, scripts or CI) — build, then tests, plus lint and typecheck when the repo has them. Never substitute a command the project does not use, and never invent one.
 
 - **State the baseline.** If the repo already had warnings or failing tests before your change, name them; a gate reported without its baseline cannot be read.
 - **Run the whole suite, not a filter that matches nothing.** A filter that matches zero tests exits successfully and proves nothing — check the reported count is plausible.
@@ -204,7 +218,9 @@ Write `docs/changes/<type>/<PREFIX><NNNN>-<slug>/RESULT.md` — **added beside t
 
 ---
 
-## Phase 6 — Report
+## Phase 6 — Verify the delegate, then report (the main agent again)
+
+The agent's report is its claim, not proof. Before reporting, check on disk: `RESULT.md` exists beside the README; `git status --short --untracked-files=all` (so new directories are listed file by file), compared with the baseline taken before delegation so pre-existing changes are not blamed on the delegate, matches the "Inventory of changes" in it and shows nothing outside §3's scope apart from the required records; the README's `git hash-object` equals the hash recorded before delegation (not `git diff`, which cannot see an untracked file or the approved version); the index row exists; and re-run the project's gate yourself (or at least build and tests) when it is cheap. Anything that does not match goes into the report as a discrepancy — never smooth it over.
 
 Short and factual:
 
