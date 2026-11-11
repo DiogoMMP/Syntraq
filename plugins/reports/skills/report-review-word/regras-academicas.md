@@ -14,7 +14,7 @@ Estas regras valem para o texto do documento. O tom da conversa com o utilizador
 ## 2. Voz e tempo verbal
 
 - Texto impessoal. Nunca primeira pessoa: "eu fiz", "vou apresentar", "apresentamos", "posso concluir". Escreve-se "O projeto é implementado", "É possível concluir", "Segue-se a apresentação".
-- Presente. Nem passado nem futuro: "foi implementado", "vai ser testado", "concluiu-se" passam a "é implementado", "é testado", "conclui-se".
+- Presente. Nem passado nem futuro: "foi implementado", "concluiu-se", "vai ser apresentado no capítulo 3" passam a "é implementado", "conclui-se", "é apresentado no capítulo 3".
 - A reescrita mantém o sentido temporal. Um plano não pode passar a parecer feito: o que é mesmo futuro (trabalho futuro, cronograma, testes ainda por fazer) escreve-se no presente sem mudar o estado, por exemplo "vai ser testado" passa a "está previsto testar" ou "o cronograma prevê", nunca a "é testado". Na dúvida sobre se algo já aconteceu, `[Dúvida]` em vez de reescrever.
 - Exceção razoável: o que um autor publicou num ano concreto. Tratar como sugestão de baixa gravidade, não como erro.
 
@@ -66,7 +66,7 @@ Estas marcas denunciam o texto. Sinalizar todas.
 Por omissão e ajustável pelo template ou pelo orientador.
 
 1. **Introdução.** O problema que levou ao projeto, objetivos específicos, questões de pesquisa (opcional), cronograma e metodologia. Pode incluir um subcapítulo sobre o uso ético e responsável de IA: modelos usados, vantagens e estratégias para evitar artificialidade e plágio involuntário.
-2. **Estado da arte.** O que já existe: contextualizar o tema, apresentar soluções semelhantes e concluir vantagens e desvantagens. Fontes científicas relevantes, com citações acompanhadas de autor e ano.
+2. **Estado da arte.** O que já existe: contextualizar o tema, apresentar soluções semelhantes e concluir vantagens e desvantagens. Fontes científicas relevantes, citadas no estilo em uso (secção 7).
 3. **Capítulos de implementação** (variam com o tema): análise da solução (por exemplo UML), implementação, testes e recolha de dados.
 4. **Conclusão.** Conclusões, limitações e trabalhos futuros.
 

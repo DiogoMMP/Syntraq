@@ -16,7 +16,7 @@ Dentro de `word/document.xml`:
 - Inserção: `<w:ins w:id="N" w:author="Claude" w:date="AAAA-MM-DDThh:mm:ssZ"><w:r><w:t xml:space="preserve">texto</w:t></w:r></w:ins>`
 - Remoção: `<w:del w:id="N" w:author="Claude" w:date="..."><w:r><w:delText xml:space="preserve">texto</w:delText></w:r></w:del>`
 - Substituição: uma remoção seguida de uma inserção, na mesma posição.
-- Os `w:id` são únicos em todo o documento, comentários incluídos.
+- Os `w:id` são únicos em todo o documento, comentários incluídos. Os desta revisão começam acima do maior `w:id` que o documento já tem, e esse ponto de partida fica registado: é o que separa as marcas desta revisão das que já lá estavam, incluindo as de uma revisão anterior também feita pelo Claude.
 - Ao dividir uma run para marcar só parte do texto, copiar o `w:rPr` (formatação) para todas as partes.
 - Não marcar dentro de campos (índice, referências cruzadas, campos do Mendeley Cite): comentar em vez disso.
 
@@ -39,7 +39,7 @@ Em `word/settings.xml`:
 ## Verificação antes de entregar
 
 1. Todo o XML bem formado e o `.docx` abre (reabrir o zip e parsear).
-2. Rejeitar **só as revisões desta revisão** (`w:author="Claude"`) dá exatamente o texto do original. Fazer isto numa cópia descartável: tirar os `w:ins` do Claude com o conteúdo, desembrulhar os `w:del` do Claude (`w:delText` volta a `w:t`) e tirar os comentários do Claude. As alterações controladas que o original já tinha ficam como estão, e o texto delas lê-se da mesma forma nos dois ficheiros. Comparar parágrafo a parágrafo.
+2. Rejeitar **só as marcas desta revisão** dá exatamente o texto do original. Identificá-las pelos `w:id` acima do ponto de partida registado, não só pelo autor, porque o original pode ter marcas do Claude de uma revisão anterior. Fazer isto numa cópia descartável: tirar esses `w:ins` com o conteúdo, desembrulhar esses `w:del` (`w:delText` volta a `w:t`) e tirar esses comentários. As alterações controladas que o original já tinha ficam como estão, e o texto delas lê-se da mesma forma nos dois ficheiros. Comparar parágrafo a parágrafo.
 3. Os `w:id` são únicos e cada comentário tem início, fim e referência.
 4. Sem `w:documentProtection` no fim.
 5. Se for possível, abrir no Word ou converter para PDF para confirmar que não fica corrompido.
