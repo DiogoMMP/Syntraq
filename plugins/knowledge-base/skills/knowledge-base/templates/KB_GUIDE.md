@@ -18,9 +18,7 @@ notes/
 └── <area>/*.md           compiled notes, moved here by compile-wiki
 wiki/<area>/…             the compiled knowledge — the single source of truth
 outputs/<area>/
-├── study/                study material: summaries, mock exams, solved exams (printable)
-├── deliverables/         things that go to other people: posts, emails, scripts, slides
-├── answers/              one-off answers to a question
+├── <purpose>/            one folder per purpose, created and registered in outputs/README.md by whoever first needs it
 └── work/<name>/          work that evolves in versions: README.md + v1/, v2/, …
 tools/                    scripts that operate on raw/ and wiki/
 ```

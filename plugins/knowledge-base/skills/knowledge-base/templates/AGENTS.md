@@ -23,7 +23,7 @@ Write every `.md` file with **no hard line breaks inside a sentence or paragraph
 
 The wiki is maintained by the `compile-wiki` skill, not by hand, and it is the single source of truth: durable knowledge goes only there. Something worth keeping goes into `notes/` as a new note, for `compile-wiki` to fold in.
 
-Anything produced for a purpose goes in `outputs/<area>/` (same areas as `wiki/`), in the folder for what it is for: study material, deliverables for other people, one-off answers, or versioned work (see `outputs/README.md`). Outputs link to the wiki articles they are based on instead of repeating them, and say what they are based on in their own frontmatter. Add one short row to the index table in `outputs/README.md` for each.
+Anything produced for a purpose goes in `outputs/<area>/` (same areas as `wiki/`), in the purpose folder registered in `outputs/README.md` for what it is for (or `work/` for versioned work); a purpose with no folder yet gets one, named in the KB's language and registered there. Outputs link to the wiki articles they are based on instead of repeating them, and say what they are based on in their own frontmatter. Add one short row to the index table in `outputs/README.md` for each.
 
 Don't assume this folder is a git repository. Never write into `raw/`, and don't expect it to follow any folder or naming convention.
 <!-- kb:end -->
