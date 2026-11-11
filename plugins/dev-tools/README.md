@@ -15,7 +15,7 @@ Do pedido à entrega: implementar mudanças com um registo escrito, estruturar p
 
 | Skill | O que faz |
 | :--- | :--- |
-| [`implement-change`](skills/implement-change/SKILL.md) | Implementa uma feature, bugfix ou hotfix ponta a ponta, com registo escrito |
+| [`implement-change`](skills/implement-change/SKILL.md) | Escreve a spec, pergunta se a aceitas e entrega-a a um agente sem contexto que implementa e escreve o `RESULT.md` |
 | [`create-readme`](skills/create-readme/SKILL.md) | Escreve ou reescreve o README.md raiz no formato da casa |
 | [`create-agents-md`](skills/create-agents-md/SKILL.md) | Escreve ou atualiza o `AGENTS.md` do repositório, em conjunto contigo |
 | [`clean-architecture`](skills/clean-architecture/SKILL.md) | Cria (ou reorganiza) um projeto em Clean Architecture |
@@ -26,7 +26,7 @@ Do pedido à entrega: implementar mudanças com um registo escrito, estruturar p
 <details>
 <summary><b><code>implement-change</code></b> — Implementa uma feature, bugfix ou hotfix ponta a ponta, com registo escrito</summary>
 
-Aceita o pedido em qualquer formato (texto livre, issue, página de wiki, spec, screenshots), determina o tipo de mudança (feature/bugfix/hotfix), investiga o projeto, propõe um plano no chat e espera aprovação, escreve a spec em `docs/changes/<tipo>/<PREFIXO><NNNN>-<slug>/README.md` antes de tocar em código — separado de `docs/wiki/`/`docs/notes/` para não poluir uma knowledge base que viva no mesmo `docs/` — implementa, corre a verificação própria do projeto e fecha com um `RESULT.md` honesto sobre o que realmente aconteceu, desvios incluídos. Não commita nem abre PR — isso fica para `commit-push` e `create-pr`. Créditos: [@michelgomessilva](https://github.com/michelgomessilva).
+Aceita o pedido em qualquer formato (texto livre, issue, página de wiki, spec, screenshots), determina o tipo de mudança (feature/bugfix/hotfix), investiga o projeto, escreve a spec em `docs/changes/<tipo>/<PREFIXO><NNNN>-<slug>/README.md` antes de tocar em código — separado de `docs/wiki/`/`docs/notes/` para não poluir uma knowledge base que viva no mesmo `docs/` — e pergunta-te se aceitas a spec. Só depois de aceite, entrega **apenas a spec** a um agente novo, sem o contexto da conversa, que implementa, corre a verificação própria do projeto e fecha com um `RESULT.md` honesto sobre o que realmente aconteceu, desvios incluídos; no fim, a skill confere o que o agente fez no disco. Não commita nem abre PR — isso fica para `commit-push` e `create-pr`. Créditos: [@michelgomessilva](https://github.com/michelgomessilva).
 
 → [`SKILL.md`](skills/implement-change/SKILL.md)
 
