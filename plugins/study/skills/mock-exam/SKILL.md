@@ -51,7 +51,7 @@ A practice exam that feels like the real one: the same structure, marks, duratio
    - **mistakes that lose marks** (`Warning box`) — from the real solutions and marking schemes when they exist, otherwise from the topic's common mistakes;
    - a closing line with what it's based on (`variant of N23-P3b`, `new`, `real question R21-P2`), whether it was verified, and the wiki article for the topic. **Verify** every answer that can be: calculations with Python, Prolog with SWI-Prolog (`swipl`), Python code by running it, other languages when their tool is installed. Write the check in a temporary file (in the scratchpad, never in `raw/` or the KB), run it, and fix the question or the answer if they disagree. When no tool is available, mark it as not verified and say why. The solutions' frontmatter records, per question, its id, marks, topic, what it's based on and whether it was verified — the next mock exam reads it to avoid repeats, and a future correction skill reads it to mark an attempt.
 
-8. **Save it where the KB says.** Look up the study purpose folder in `KB_GUIDE.md`/ `outputs/README.md`. Each mock exam is its own numbered folder — they are different exams, not versions of one:
+8. **Save it where the KB says.** Find the study purpose folder as `../../references/study-folder.md` describes. Each mock exam is its own numbered folder — they are different exams, not versions of one:
    ```
    outputs/<area>/<study>/<mock>-<scope>-<n>/
    ├── <mock>-<scope>-<n>-<paper>.md / .docx / .pdf

@@ -48,7 +48,7 @@ Solves a paper the way the course would: with its methods, its notation and its 
 
 8. **Check the renderer** as `study-summary` step 2 does (pandoc — ask before installing — and python-docx).
 
-9. **Save it where the KB says.** Look up the study purpose folder in `KB_GUIDE.md`/ `outputs/README.md`:
+9. **Save it where the KB says.** Find the study purpose folder as `../../references/study-folder.md` describes:
    ```
    outputs/<area>/<study>/<solution>-<paper>/<solution>-<paper>.md / .docx / .pdf
    ```

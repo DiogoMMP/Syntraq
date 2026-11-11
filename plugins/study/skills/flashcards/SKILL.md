@@ -42,7 +42,7 @@ Turns the course into cards worth reviewing every day: one fact each, grounded i
 
 6. **Write the deck source** following `templates/deck.md`: frontmatter (deck name `<KB topic>::<course>`, note type names, version), then one section per topic with its cards as `<!-- card id=… type=basic|cloze tags="…" -->` … `---` … `<!-- /card -->` blocks — front above the `---`, back (or the cloze's back extra) below, the source on the back's last line. Ids are `<course>-NNNN`, never reused.
 
-7. **Save it where the KB says** — the study purpose folder in `KB_GUIDE.md`/`outputs/README.md`:
+7. **Save it where the KB says** — the study purpose folder, found as `../../references/study-folder.md` describes:
    ```
    outputs/<area>/<study>/flashcards-<scope>/
    ├── flashcards-<scope>.md     the deck source

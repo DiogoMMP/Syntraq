@@ -9,6 +9,12 @@ frontmatter may set:
     toc: false                               leave the table of contents out (e.g. an exam paper)
     version, updated                         shown in the footer of every page, when present
     section-breaks: false                    don't start every top-level (#) section on a new page
+    layout: sheet                            a dense exam-consultation sheet: no cover and no table of contents,
+                                             text in columns, small type, narrow margins, no page break per section
+    columns: 2                               (layout: sheet) number of text columns, default 2
+    font-size: 7.5                           (layout: sheet) body size in pt, default 7.5 (headings and boxes follow)
+    margin: 1.0                              (layout: sheet) page margins in cm, default 1.0
+    orientation: landscape                   (layout: sheet) default portrait
 
 Layout: every top-level section starts on a new page; tables (centred, full grid, coloured header, alternating row colours), figures and captions are centred; paragraphs, code blocks and the boxes are never
 cut across pages; a table that fits on a page is kept whole (a longer one breaks only between rows and
@@ -42,7 +48,8 @@ from pathlib import Path
 from docx import Document
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
-from docx.shared import RGBColor
+from docx.enum.style import WD_STYLE_TYPE
+from docx.shared import Cm, Pt, RGBColor
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 
@@ -360,6 +367,96 @@ def tidy_layout(docx_path, section_breaks):
     doc.save(str(docx_path))
 
 
+SHEET_TITLE_STYLES = ("Title", "Subtitle", "Author", "Date", "Abstract")
+
+
+def number(meta, key, default, low, high):
+    """A numeric frontmatter value kept inside sane bounds; the default when absent or not a number."""
+    try:
+        value = float(meta.get(key, default))
+    except ValueError:
+        return default
+    return max(low, min(high, value))
+
+
+def apply_sheet_layout(docx_path, meta):
+    """Turn the document into a dense consultation sheet: columns, small type, narrow margins, no cover."""
+    columns = int(number(meta, "columns", 2, 1, 4))
+    body = number(meta, "font-size", 7.5, 5, 11)
+    margin = number(meta, "margin", 1.0, 0.5, 3)
+    landscape = meta.get("orientation", "portrait").lower() == "landscape"
+
+    doc = Document(str(docx_path))
+
+    for section in doc.sections:
+        width, height = sorted((section.page_width, section.page_height))
+        section.page_width, section.page_height = (height, width) if landscape else (width, height)
+        for side in ("left_margin", "right_margin", "top_margin", "bottom_margin"):
+            setattr(section, side, Cm(margin))
+        section.footer_distance = Cm(min(0.5, margin / 2))
+        properties = section._sectPr
+        old = properties.find(qn("w:cols"))
+        if old is not None:
+            properties.remove(old)
+        cols = OxmlElement("w:cols")
+        cols.set(qn("w:num"), str(columns))
+        cols.set(qn("w:space"), "227")  # 0.4 cm between columns
+        if columns > 1:
+            cols.set(qn("w:sep"), "1")  # thin line between columns
+        properties.append(cols)
+
+    sizes = {"Heading 1": body + 2.5, "Heading 2": body + 1.5, "Heading 3": body + 0.5, "Heading 4": body,
+             "Source Code": body - 0.5, "Verbatim Char": body - 0.5}
+    for style in doc.styles:
+        if style.type != WD_STYLE_TYPE.PARAGRAPH and style.type != WD_STYLE_TYPE.CHARACTER:
+            continue
+        if style.name in sizes:
+            style.font.size = Pt(sizes[style.name])
+        elif style.name in ("Normal", "Body Text", "First Paragraph", "Compact", "Table", "Block Text") or style.name in BOX_STYLES:
+            style.font.size = Pt(body)
+        if style.type == WD_STYLE_TYPE.PARAGRAPH:
+            formatting = style.paragraph_format
+            if style.name.startswith("Heading"):
+                formatting.space_before, formatting.space_after = Pt(3), Pt(1)
+                formatting.page_break_before = False
+            else:
+                formatting.space_before, formatting.space_after = Pt(0), Pt(1.5)
+                formatting.line_spacing = 1.0
+            if style.name in BOX_STYLES:
+                formatting.left_indent = Cm(0.15)
+
+    for paragraph in list(doc.paragraphs):
+        if paragraph.style is not None and paragraph.style.name in SHEET_TITLE_STYLES:
+            paragraph._p.getparent().remove(paragraph._p)
+
+    # List items: pandoc's numbering indents by 1.27 cm, which eats a third of a narrow column.
+    for paragraph in doc.paragraphs:
+        if paragraph._p.xpath("./w:pPr/w:numPr"):
+            paragraph.paragraph_format.left_indent = Cm(0.45)
+            paragraph.paragraph_format.first_line_indent = Cm(-0.35)
+
+    for table in doc.tables:
+        table.autofit = False
+        width = table._tbl.tblPr.find(qn("w:tblW"))
+        if width is None:
+            width = OxmlElement("w:tblW")
+            table._tbl.tblPr.append(width)
+        width.set(qn("w:type"), "pct")
+        width.set(qn("w:w"), "4850")  # almost the full width of the column, clear of the separator line
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    paragraph.paragraph_format.space_after = Pt(0)
+                    for run in paragraph.runs:
+                        run.font.size = Pt(body)
+
+    for section in doc.sections:
+        for paragraph in section.footer.paragraphs:
+            for run in paragraph.runs:
+                run.font.size = Pt(max(5, body - 1.5))
+    doc.save(str(docx_path))
+
+
 WORD_SCRIPT = r"""
 $ErrorActionPreference = 'Stop'
 $word = New-Object -ComObject Word.Application
@@ -437,10 +534,13 @@ def main():
     pdf_path = source.with_suffix(".pdf")
     meta = read_frontmatter(source.read_text(encoding="utf-8"))
 
-    toc = meta.get("toc", "true").lower() not in ("false", "no", "0")
+    sheet = meta.get("layout", "").lower() == "sheet"
+    toc = not sheet and meta.get("toc", "true").lower() not in ("false", "no", "0")
     run_pandoc(pandoc, source, docx_path, reference, toc)
     add_footer(docx_path, meta, source.stem)
-    tidy_layout(docx_path, meta.get("section-breaks", "true").lower() not in ("false", "no", "0"))
+    tidy_layout(docx_path, not sheet and meta.get("section-breaks", "true").lower() not in ("false", "no", "0"))
+    if sheet:
+        apply_sheet_layout(docx_path, meta)
     print(f"DOCX: {docx_path}")
 
     if args.no_pdf:

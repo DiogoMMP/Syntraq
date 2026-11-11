@@ -27,7 +27,7 @@ $$ P(H \mid E) = \frac{P(E \mid H)\,P(H)}{P(E)} $$
 ## Worked example
 
 ::: {custom-style="Example box"}
-Statement, then the solution step by step. Source: raw/… (or "example made up for this summary").
+Statement, then the solution step by step.
 :::
 
 ## Common mistakes
@@ -37,8 +37,3 @@ Statement, then the solution step by step. Source: raw/… (or "example made up 
 :::
 
 Related: Topic B, Topic C.
-
-# Sources
-
-- [[Topic article]] — wiki
-- raw/path/to/slides.pdf — slides 12–30

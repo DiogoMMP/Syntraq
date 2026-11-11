@@ -4,7 +4,7 @@ The per-course progress record is shared by `correct-attempt` (exam-style attemp
 
 ## Where it lives
 
-In the KB's study purpose folder (look it up in `KB_GUIDE.md`/`outputs/README.md`), one folder per course, names in the KB's language:
+In the KB's study purpose folder (found as `study-folder.md` describes), one folder per course, names in the KB's language:
 
 ```
 outputs/<area>/<study>/<progress>-<course>/
