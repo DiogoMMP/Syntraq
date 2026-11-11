@@ -87,7 +87,7 @@ Both are views of the knowledge base — the knowledge itself stays in the wiki.
 
 12. **Keep the wiki the single source of truth.** A summary is never promoted into the wiki as a whole. If writing it surfaced something the wiki doesn't say yet (a definition, an example, a detail from `raw/`), offer to capture it as a note (`capture-note`) so `compile-wiki` folds it into the wiki — then the next version of the summary will carry it from there.
 
-13. **Report**: the files written (the summary's Word/PDF and the exam mapping), version, page count, what the KB didn't cover, any place where sources disagreed, and whether the PDF was produced.
+13. **Report**: the files written (the summary's Word/PDF and the exam mapping), version, page count, what the KB didn't cover, any place where sources disagreed, and whether the PDF was produced. Before reporting, if the KB has a dashboard, log the run as [`references/dashboard.md`](../../references/dashboard.md) says (`event study-summary "Resumo <scope> v<N>" --area <course>`).
 
 ## Notes
 

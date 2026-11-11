@@ -17,7 +17,7 @@ e.g. `progresso-engcia/progresso-engcia.md`, `progresso-engcia/tentativas/01-sim
 
 ## Rebuild, don't patch
 
-Every time an assessment or a quiz session is added, rebuild `<progress>-<course>.md` from scratch out of the frontmatter of every file in `<attempts>/` and `<quizzes>/`, following `skills/correct-attempt/templates/progress.md`. Never edit the record incrementally — rebuilding means it can't drift from the files it summarises. The record isn't rendered to PDF. Keep its single row in the index table of `outputs/README.md` current.
+Every time an assessment or a quiz session is added, rebuild `<progress>-<course>.md` from scratch out of the frontmatter of every file in `<attempts>/` and `<quizzes>/`, following `skills/correct-attempt/templates/progress.md`. Never edit the record incrementally — rebuilding means it can't drift from the files it summarises. The record isn't rendered to PDF. Keep its single row in the index table of `outputs/README.md` current. If the KB has a dashboard, write the course's `progress.json` from the same data at the same time, as [`dashboard.md`](dashboard.md) describes.
 
 ## Writing it
 

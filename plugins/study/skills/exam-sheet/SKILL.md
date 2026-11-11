@@ -75,7 +75,7 @@ Like every study document it is a view of the knowledge base; the knowledge itse
 
 11. **Keep the wiki the single source of truth.** A sheet is never promoted into the wiki. If writing it surfaced something the wiki doesn't say (a formula, a detail from `raw/`), offer to capture it as a note (`capture-note`).
 
-12. **Report**: the file(s) written, version, pages against the budget, the font size and columns used, the coverage of the past exams before and after the check (and what is still missing, and why), what the KB didn't have, and whether the PDF was produced.
+12. **Report**: the file(s) written, version, pages against the budget, the font size and columns used, the coverage of the past exams before and after the check (and what is still missing, and why), what the KB didn't have, and whether the PDF was produced. Before reporting, if the KB has a dashboard, log the run as [`references/dashboard.md`](../../references/dashboard.md) says (`event exam-sheet "Folha <scope> v<N>" --area <course>`).
 
 ## Notes
 

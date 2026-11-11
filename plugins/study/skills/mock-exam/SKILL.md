@@ -65,7 +65,7 @@ A practice exam that feels like the real one: the same structure, marks, duratio
 
 11. **Keep the wiki the single source of truth.** Never promote a mock exam into the wiki. If writing one surfaced something the wiki doesn't say, offer to capture it as a note.
 
-12. **Report**: the files written, the topics covered and their marks, what was verified and how, what wasn't, and whether the PDFs were produced. Suggest doing the paper under exam conditions before opening the solutions.
+12. **Report**: the files written, the topics covered and their marks, what was verified and how, what wasn't, and whether the PDFs were produced. Suggest doing the paper under exam conditions before opening the solutions. Before reporting, if the KB has a dashboard, log the run as [`references/dashboard.md`](../../references/dashboard.md) says (`event mock-exam "Simulado <name>" --area <course>`).
 
 ## Notes
 

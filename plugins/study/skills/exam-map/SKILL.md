@@ -87,7 +87,7 @@ Turns a course's past exams into durable knowledge in the wiki: what the exam lo
 
 10. **Show changes before applying them the first time.** On the first run against an existing article, summarise in chat what will be added, rewritten or kept, and wait for a yes before writing. New articles, and later incremental runs, can be written directly.
 
-11. **Report**: how many papers were read (and which were skipped or unreadable), the 3–5 🔥 topics with their numbers, the main trend, topics without an article, and whether an `outputs/` analysis now duplicates the wiki.
+11. **Report**: how many papers were read (and which were skipped or unreadable), the 3–5 🔥 topics with their numbers, the main trend, topics without an article, and whether an `outputs/` analysis now duplicates the wiki. Before reporting, if the KB has a dashboard, write the course's `exam-map.json` from the article's ranking, and its `grade_scale`/`pass_grade` in `course.json` when the course's rules state them, as [`references/dashboard.md`](../../references/dashboard.md) says. Then log the run (`event exam-map "Mapeou N exames" --area <course> --count N`).
 
 ## Notes
 
