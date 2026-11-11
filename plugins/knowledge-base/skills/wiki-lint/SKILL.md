@@ -41,7 +41,7 @@ The "lint" step from Karpathy's [LLM Knowledge Bases](https://gist.github.com/ka
 
 9. **Ask the user which fixes to apply**, e.g.: relink or remove broken links, link orphaned articles into `wiki/index.md` (or confirm they should stay unlinked / be deleted), fix or remove dangling manifest rows, move misplaced notes to their archive folder (relinking the wiki), move or index misplaced outputs, shorten index rows, resolve duplication by moving the knowledge into the wiki and trimming the output, and note stale-reference candidates for the user to confirm before touching the article text. Moves are shown as a full from → to list first.
 
-10. **Apply only the approved fixes**, then report what changed.
+10. **Apply only the approved fixes**, then report what changed. If anything was fixed and the KB has a dashboard, log it as [`references/dashboard-data.md`](../../references/dashboard-data.md) says (`event wiki-lint "Corrigiu N problemas" --count N`); the page's health section recounts on its own.
 
 ## Notes
 

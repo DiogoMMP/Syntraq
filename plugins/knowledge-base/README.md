@@ -21,6 +21,7 @@ Uma knowledge base pessoal mantida por LLM, que o LLM compila numa `wiki/` em ma
 | [`adr-new`](skills/adr-new/SKILL.md) | Cria uma nota ADR de decisão arquitetural |
 | [`resume`](skills/resume/SKILL.md) | Briefing para retomar um projeto pessoal parado |
 | [`wiki-lint`](skills/wiki-lint/SKILL.md) | Health check da `wiki/` (links partidos, órfãos, etc.) |
+| [`dashboard`](skills/dashboard/SKILL.md) | `dashboard.html` na raiz da KB, com menus: visão geral, uma página por UC, fontes, wiki, outputs e atividade |
 
 ## Em detalhe
 
@@ -75,6 +76,38 @@ Briefing só de leitura: lê `wiki/Estrutura.md` (ou `index.md`), notas pendente
 Health check da `wiki/`: links partidos, artigos órfãos (não referenciados no `index.md`), referências desatualizadas a ficheiros/decisões que já não existem, entradas soltas em `wiki/sources.md`/`notes/`, notas fora do sítio (compiladas na inbox ou pendentes no arquivo), outputs fora da estrutura ou sem linha no índice, e conteúdo repetido entre `outputs/` e a wiki. Reporta primeiro, só corrige o que for aprovado.
 
 → [`SKILL.md`](skills/wiki-lint/SKILL.md)
+
+</details>
+
+<details>
+<summary><b><code>dashboard</code></b> — <code>dashboard.html</code> na raiz da KB: visão geral, uma página por UC, fontes, wiki, outputs e atividade</summary>
+
+Monta o dashboard de uma KB em modo research: um `dashboard.html` na raiz que abre com duplo clique, offline, com as cores e o logo do Syntraq e menus. Tem estas páginas:
+
+- **Visão geral**: os próximos exames, próximos passos com um botão para copiar o pedido para o Claude, as tarefas de hoje, um mapa de calor do ritmo de estudo e o que falta;
+- **Uma página por UC**: contagem decrescente, prioridades com links para o Obsidian, notas estimadas com tendência e nota mínima, o plano, o material, as fontes e a wiki da UC;
+- **Fontes, Wiki, Outputs e Atividade**.
+
+Tudo o resto vive em `.dashboard/`, uma pasta que o Obsidian ignora:
+
+- `settings.json` tem as decisões deste skill (áreas, exclusões, o tema);
+- `courses/<uc>/*.json` é escrito pelos skills de estudo;
+- `activity/` tem um ficheiro por evento, que cada skill regista com `python .dashboard/dashboard.py event …`;
+- `data.js` é o snapshot que a página lê, refeito a cada evento.
+
+Assim o dashboard mantém-se atualizado sozinho. Este skill só volta a ser preciso na primeira vez, depois de uma atualização do plugin ou quando aparecem pastas ou UCs novas. Decide tudo sem fazer perguntas. O que não encontra (uma data de exame, a nota mínima) aparece como cartão "em falta", com o pedido pronto a copiar.
+
+No Chrome ou no Edge, o botão "Ligar à pasta da KB" põe a página a contar o `raw/` ao vivo e a guardar o tema no ficheiro. Se o `raw/` for uma junction, a página pede para ligar também a pasta real dele.
+
+Exemplo com uma KB de demonstração (dados fictícios):
+
+| Visão geral | Página de uma UC |
+| :---: | :---: |
+| ![Visão geral do dashboard](assets/dashboard-overview.png) | ![Página de uma UC](assets/dashboard-course.png) |
+| **Outputs** | **Atividade** |
+| ![Outputs por pasta e tipo](assets/dashboard-outputs.png) | ![Ritmo de estudo e atividade dos skills](assets/dashboard-activity.png) |
+
+→ [`SKILL.md`](skills/dashboard/SKILL.md)
 
 </details>
 

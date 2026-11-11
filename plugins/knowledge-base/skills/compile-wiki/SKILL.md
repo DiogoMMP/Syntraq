@@ -122,6 +122,8 @@ d. Never touch `raw/` itself, and never delete an area that still has content: a
 
 6. **Report back**: what was processed (sources/notes/commits/issues/PRs), which articles were created vs. updated vs. trimmed or removed because a source/note was deleted, and flag anything skipped (unreadable formats, datasets too large to read directly — research mode may need a dedicated tool in `tools/` instead; or issues/PRs skipped because `gh` wasn't usable). In code mode, confirm `wiki/Estrutura.md` was refreshed.
 
+7. **Feed the dashboard**, research mode only, if the KB has one: log the run as [`references/dashboard-data.md`](../../references/dashboard-data.md) says, e.g. `event compile-wiki "Compilou 12 fontes e 2 notas" --count 12`. Add `--area` when everything compiled belongs to one area. If a new top-level folder appeared in `raw/` or `wiki/`, say in the report that "atualiza o dashboard" adds it to the page.
+
 ## Notes
 
 - Write every article without hard line breaks: one paragraph, list item or table row per line, however long — Obsidian wraps lines. Breaks only between blocks and inside code blocks.
