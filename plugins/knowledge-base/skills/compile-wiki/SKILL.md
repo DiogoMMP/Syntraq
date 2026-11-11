@@ -98,7 +98,25 @@ d. **Reconcile each affected article:**
    - If that leaves an article with no remaining source or note, propose deleting it (ask; don't delete silently), then remove it from `wiki/index.md` and repoint or remove `[[wikilinks]]` to it from other articles.
    - Remove the vanished source's row from `wiki/sources.md`.
 
-e. **Code mode extra:** `wiki/Estrutura.md` is regenerated every run so it already drops deleted files; articles that cite a deleted repo path in backticks are only *flagged* in the report (code moves legitimately), not rewritten.
+e. **Rename vs. deletion.** Before treating a vanished source as deleted, look for it elsewhere in `raw/` (same file name, same size, or same content). A match is a move: if only some files moved, update their paths in `wiki/sources.md` and the citations in the articles; if whole folders moved, renamed, merged or split, that is a restructuring — handle it with the section below instead of reconciling file by file.
+
+f. **Code mode extra:** `wiki/Estrutura.md` is regenerated every run so it already drops deleted files; articles that cite a deleted repo path in backticks are only *flagged* in the report (code moves legitimately), not rewritten.
+
+### Restructuring of `raw/` (research mode)
+
+`raw/` has no rules, so the user may reorganise it at any time (a folder renamed, courses merged or split, material moved into a new tree). The wiki, `notes/` and `outputs/` share one taxonomy of areas (`KB_GUIDE.md`), so they must follow — never leave them describing a `raw/` that no longer exists. Run this when the deletions check finds whole folders of `raw/` gone and the same files reappearing elsewhere, when `raw/`'s top-level folders no longer match the wiki's areas, or when the user says they reorganised `raw/`.
+
+a. **Work out the mapping** old area → new area(s) by matching files (same name, size or content) between `wiki/sources.md` and the current `raw/`. List it, with anything that can't be matched, and apply the same guard as the deletions check (an unmounted link is not a restructuring).
+
+b. **Show the whole plan and get a yes before moving anything**, as a from → to list: the `wiki/<area>/` folders, the `notes/<area>/` archive folders and the `outputs/<area>/` folders that follow the mapping; every file that is moved, merged into an existing area, or split between several (split by the source each article is based on, asking when an article spans two); what links will be rewritten.
+
+c. **Apply it** (after the yes), keeping each area the same in all three trees:
+   - Move or rename the area folders in `wiki/`, `notes/` and `outputs/`; when two areas merge, merge the folders and resolve name clashes by asking.
+   - Rewrite every `[[wikilink]]` and relative link that pointed at a moved article, every `../raw/…` link and the paths in `wiki/sources.md` to the new locations, the `articles:` and `source:` of notes, the `based_on:` of outputs and the index tables in `wiki/index.md` and `outputs/README.md`. Update the `.docx`/`.pdf` of outputs only by leaving them in their moved folder — never regenerate them here.
+   - Update the area names written in `KB_GUIDE.md`, the `AGENTS.md` block and the README files that list them.
+   - Then run the normal pass so the manifest, articles and index reflect what is now in `raw/`, and run the `wiki-lint` checks on links.
+
+d. Never touch `raw/` itself, and never delete an area that still has content: an area left empty by the move is removed only after listing it in the plan.
 
 5. **Refresh `wiki/index.md`** once everything pending is processed: make sure every concept/article is listed and grouped sensibly, and remove stale entries for articles that no longer exist.
 

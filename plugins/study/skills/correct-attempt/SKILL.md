@@ -42,7 +42,7 @@ Marks what the user wrote the way the exam would, explains every lost mark, and 
 
 7. **Show the result in the chat** — estimated grade, a line per question, the two or three things to review first — then save it.
 
-8. **Save it where the KB says.** Look up the study purpose folder in `KB_GUIDE.md`/ `outputs/README.md`; everything about the student's attempts lives in one folder per course:
+8. **Save it where the KB says.** Find the study purpose folder as `../../references/study-folder.md` describes; everything about the student's attempts lives in one folder per course:
    ```
    outputs/<area>/<study>/<progress>-<course>/
    ├── <progress>-<course>.md

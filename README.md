@@ -82,7 +82,10 @@ claude --plugin-dir ./plugins/dev-tools
 | Skill | O que faz |
 | :--- | :--- |
 | `exam-map` | Mapeia o que sai nos exames de uma cadeira |
+| `teach` | Faz de professor no chat e explica uma parte da matéria |
 | `study-summary` | Escreve um resumo completo para imprimir, em Word e PDF |
+| `exam-sheet` | Faz a folha de consulta para o exame: duas colunas, letra pequena |
+| `coverage-check` | Verifica se um resumo ou folha chega para os exames e acrescenta o que falta |
 | `mock-exam` | Cria simulados de exame com enunciado e correção separados |
 | `solve-exam` | Resolve exames e fichas só com a matéria da cadeira |
 | `correct-attempt` | Corrige as tuas tentativas e regista os pontos fracos |

@@ -29,7 +29,7 @@
     {
       "name": "study",
       "source": "./plugins/study",
-      "description": "Study skills on top of a research knowledge base: exam-map, study-summary, mock-exam, solve-exam, correct-attempt, quiz, flashcards, study-plan.",
+      "description": "Study skills on top of a research knowledge base: exam-map, teach, study-summary, exam-sheet, coverage-check, mock-exam, solve-exam, correct-attempt, quiz, flashcards, study-plan.",
       "category": "productivity"
     },
     {
