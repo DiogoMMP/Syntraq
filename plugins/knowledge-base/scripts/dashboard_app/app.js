@@ -13,7 +13,7 @@
   var PT = /^pt/i.test(D.language || "");
   root.lang = PT ? "pt-PT" : "en";
   var T = PT ? {
-    overview: "Visão geral", courses: "Unidades curriculares", archive: "Arquivo", sources: "Fontes", wiki: "Wiki", outputs: "Outputs", activity: "Atividade",
+    overview: "Visão geral", courses: "Unidades curriculares", areas: "Áreas", archive: "Arquivo", sources: "Fontes", wiki: "Wiki", outputs: "Outputs", activity: "Atividade",
     search: "Pesquisar artigos, outputs, UCs…", generated: "Atualizado", stale: "desatualizado", light: "Claro", dark: "Escuro",
     nextExam: "Próximo exame", noExam: "Sem data", days: "dias", day: "dia", today: "hoje", tomorrow: "amanhã", ago: "há", in_: "daqui a", taken: "realizado",
     compiledPct: "Fontes compiladas", toCompile: "Por compilar", articles: "Artigos", notes: "Notas por compilar", of: "de", outOfScope: "fora do âmbito",
@@ -31,8 +31,8 @@
     filter: "Filtrar…", open: "abrir", obs: "abrir no Obsidian", k: { raw: "raw", wiki: "wiki", note: "nota", output: "output" },
     state: { red: "fraco", yellow: "a melhorar", green: "dominado", none: "sem dados" },
     s: {
-      compileArea: function (n, a) { return "Compilar " + n + " fontes de " + a; }, compileAreaP: function (a) { return "compila a wiki — começa pelas fontes pendentes de " + a; },
-      compileNotes: function (n) { return "Compilar " + n + " notas da inbox"; }, compileNotesP: "compila as notas pendentes da wiki",
+      compileArea: function (n, a) { return "Compilar " + n + (n === 1 ? " fonte de " : " fontes de ") + a; }, compileAreaP: function (a) { return "compila a wiki — começa pelas fontes pendentes de " + a; },
+      compileNotes: function (n) { return "Compilar " + n + (n === 1 ? " nota da inbox" : " notas da inbox"); }, compileNotesP: "compila as notas pendentes da wiki",
       lint: "Corrigir a saúde da wiki", lintP: "corre o wiki-lint",
       quiz: function (t, a) { return "Treinar " + t + " (" + a + ")"; }, quizP: function (t, a) { return "faz-me um quiz de " + t + " de " + a; },
       mock: function (a) { return "Fazer um simulado de " + a; }, mockP: function (a) { return "faz-me um simulado de " + a; },
@@ -42,7 +42,7 @@
     },
     footer: "Os números atualizam-se sozinhos quando um skill corre. «atualiza o dashboard» só é preciso quando há pastas ou plugins novos."
   } : {
-    overview: "Overview", courses: "Courses", archive: "Archive", sources: "Sources", wiki: "Wiki", outputs: "Outputs", activity: "Activity",
+    overview: "Overview", courses: "Courses", areas: "Areas", archive: "Archive", sources: "Sources", wiki: "Wiki", outputs: "Outputs", activity: "Activity",
     search: "Search articles, outputs, courses…", generated: "Updated", stale: "out of date", light: "Light", dark: "Dark",
     nextExam: "Next exam", noExam: "No date", days: "days", day: "day", today: "today", tomorrow: "tomorrow", ago: "ago", in_: "in", taken: "taken",
     compiledPct: "Sources compiled", toCompile: "To compile", articles: "Articles", notes: "Notes to compile", of: "of", outOfScope: "out of scope",
@@ -60,8 +60,8 @@
     filter: "Filter…", open: "open", obs: "open in Obsidian", k: { raw: "raw", wiki: "wiki", note: "note", output: "output" },
     state: { red: "weak", yellow: "improving", green: "mastered", none: "no data" },
     s: {
-      compileArea: function (n, a) { return "Compile " + n + " sources of " + a; }, compileAreaP: function (a) { return "compile the wiki — start with the pending sources of " + a; },
-      compileNotes: function (n) { return "Compile " + n + " inbox notes"; }, compileNotesP: "compile the pending notes into the wiki",
+      compileArea: function (n, a) { return "Compile " + n + (n === 1 ? " source of " : " sources of ") + a; }, compileAreaP: function (a) { return "compile the wiki — start with the pending sources of " + a; },
+      compileNotes: function (n) { return "Compile " + n + (n === 1 ? " inbox note" : " inbox notes"); }, compileNotesP: "compile the pending notes into the wiki",
       lint: "Fix the wiki's health", lintP: "run wiki-lint",
       quiz: function (t, a) { return "Practise " + t + " (" + a + ")"; }, quizP: function (t, a) { return "quiz me on " + t + " in " + a; },
       mock: function (a) { return "Take a mock exam of " + a; }, mockP: function (a) { return "give me a mock exam of " + a; },
@@ -144,7 +144,8 @@
     var o = { red: 0, yellow: 1, none: 2, green: 3 }, b = function (t) { return /🔥/.test(t.band || "") ? 0 : /⚠/.test(t.band || "") ? 1 : 2; };
     return list.sort(function (p, q) { return o[stateOf(p.state)] - o[stateOf(q.state)] || b(p) - b(q) || (q.share || 0) - (p.share || 0); });
   }
-  function hasStudy(a) { return examsOf(a).length || topicsOf(a).length || (a.attempts || []).length || (a.materials || []).length; }
+  function isStudyKB() { return (D.plans || []).length > 0 || AREAS.some(function (a) { return hasStudy(a) || a.course.pass_grade != null || (a.course.exams || []).length; }); }
+  function hasStudy(a) { return examsOf(a).length || topicsOf(a).length || (a.attempts || []).length || (a.materials || []).some(function (m) { return /summary|sheet|mock|solution|flashcard|study|resumo|folha|simulado|resolu/i.test(m.type); }); }
   function planFor(a) {
     var ns = names(a), out = [];
     (D.plans || []).forEach(function (p) {
@@ -219,7 +220,7 @@
       if (only && a !== only) return;
       if (a.archived) return;
       var upcoming = examsOf(a).some(function (e) { return diff(e.date) >= 0; });
-      if (!upcoming && (hasStudy(a) || a.sources.total) && !has(a, "exam-date"))
+      if (!upcoming && isStudyKB() && (hasStudy(a) || a.sources.total) && !has(a, "exam-date"))
         out.push({ area: a.name, kind: "exam-date", what: (PT ? "Data do exame — " : "Exam date — ") + a.name, how: PT ? "Corre o study-plan ou diz a data ao Claude." : "Run study-plan or tell Claude the date.", prompt: PT ? "a data do exame de " + a.name + " é …" : "the exam date of " + a.name + " is …" });
       if (((a.attempts || []).length || upcoming) && a.course.pass_grade == null && !has(a, "pass-grade"))
         out.push({ area: a.name, kind: "pass-grade", what: T.noPass + " — " + a.name, how: PT ? "Nem sempre é 9,5: diz ao Claude qual é, ou onde está a regra (ficha da UC)." : "Tell Claude the pass mark, or where the rule is.", prompt: PT ? "a nota mínima de " + a.name + " é …" : "the pass mark of " + a.name + " is …" });
@@ -283,7 +284,7 @@
   function kpis() {
     var tot = D.totals || {}, up = allExams().filter(function (x) { return diff(x.e.date) >= 0; }), h = '<div class="kpis">';
     if (up.length) { var x = up[0], n = diff(x.e.date); h += '<a class="kpi" href="#/uc/' + esc(x.a.slug) + '"><div class="l">' + esc(T.nextExam) + '</div><div class="v">' + (n === 0 ? esc(T.today) : num(n, 0) + "<small>" + esc(n === 1 ? T.day : T.days) + "</small>") + '</div><div class="s">' + esc(x.a.name) + " · " + esc(fmtDate(x.e.date)) + "</div></a>"; }
-    else h += '<div class="kpi dim"><div class="l">' + esc(T.nextExam) + '</div><div class="v">' + esc(T.noExam) + '</div><div class="s">&nbsp;</div></div>';
+    else if (isStudyKB()) h += '<div class="kpi dim"><div class="l">' + esc(T.nextExam) + '</div><div class="v">' + esc(T.noExam) + '</div><div class="s">&nbsp;</div></div>';
     h += '<a class="kpi" href="#/sources"><div class="l">' + esc(T.compiledPct) + '</div><div class="v">' + pct(tot.compiled, tot.sources) + '<small>%</small></div><div class="s">' + num(tot.compiled) + " " + esc(T.of) + " " + num(tot.sources) + (tot.excluded ? " · " + num(tot.excluded) + " " + esc(T.outOfScope) : "") + "</div></a>";
     h += '<a class="kpi" href="#/sources"><div class="l">' + esc(T.toCompile) + '</div><div class="v">' + num((tot.pending || 0) + (tot.changed || 0)) + '</div><div class="s">' + num(tot.pending) + " " + esc(T.newF) + " · " + num(tot.changed) + " " + esc(T.changed) + "</div></a>";
     h += '<a class="kpi" href="#/wiki"><div class="l">' + esc(T.articles) + '</div><div class="v">' + num(tot.articles) + '</div><div class="s">' + (tot.last_compile ? esc(T.lastCompile) + " " + esc(rel(tot.last_compile)) : "&nbsp;") + "</div></a>";
@@ -421,7 +422,7 @@
     return '<aside class="side"><div class="brand">' + LOGO + '<div><div class="k">Syntraq</div><div class="n">' + esc(D.kb.name || D.kb.folder) + "</div></div></div>" +
       '<div><input class="search" id="q" placeholder="' + esc(T.search) + '" autocomplete="off"><div class="results" id="qr"></div></div>' +
       "<nav>" + a("#/", "◇ " + esc(T.overview)) +
-      (act.length ? '<div class="grp">' + esc(T.courses) + "</div>" + act.map(ucLink).join("") : "") +
+      (act.length ? '<div class="grp">' + esc(isStudyKB() ? T.courses : T.areas) + "</div>" + act.map(ucLink).join("") : "") +
       (arch.length ? '<details' + (arch.some(function (x) { return route === "#/uc/" + x.slug; }) ? " open" : "") + '><summary><div class="grp">▸ ' + esc(T.archive) + " · " + arch.length + "</div></summary>" + arch.map(ucLink).join("") + "</details>" : "") +
       '<div class="grp">KB</div>' + a("#/sources", "⬇ " + esc(T.sources), num((tot.pending || 0) + (tot.changed || 0)) || "") + a("#/wiki", "❖ " + esc(T.wiki), num(tot.articles)) + a("#/outputs", "▤ " + esc(T.outputs), num(tot.outputs)) + a("#/activity", "∿ " + esc(T.activity)) + "</nav>" +
       '<div class="foot">' + liveControl(false) + '<div class="row"><button class="btn sm" id="theme"></button><span class="sp"></span><span title="' + esc(gen) + '">' + esc(T.generated) + " " + esc(rel(gen.slice(0, 10))) + " " + esc(gen.slice(11, 16)) + "</span></div>" +

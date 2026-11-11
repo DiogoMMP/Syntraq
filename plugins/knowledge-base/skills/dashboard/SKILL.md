@@ -140,4 +140,6 @@ Everything else updates itself. If the user asks to "update the dashboard" and n
 - **Activity**: the rhythm heat map, what each skill did (from the events), and the files that changed.
 - **Search** in the sidebar finds courses, wiki articles (opened in Obsidian) and outputs.
 
+**Without the study plugin** (or in a KB that isn't used to study) the page works the same: with no exams, plans, topics or grades, the study parts simply don't appear, the menu calls the areas "Areas" instead of courses, and no exam-date cards are shown. Each area's page then shows its next steps, sources, wiki articles and outputs.
+
 Countdowns, "today", the plan's ahead/behind state and the streak are worked out in the browser every time the page opens. The page needs nothing else to stay right from one day to the next.
