@@ -311,6 +311,18 @@ def sources_manifest(kb: Path, raw_files: dict):
                 else:
                     pieces = [clean_cell(x) for x in re.split(r",\s+|<br\s*/?>|;\s+", c)]
                     hits = [x for x in pieces if x and key(x) in raw_files]
+                    if hits:
+                        # Later pieces may be bare names or globs relative to the
+                        # first file's folder (a row shared by sibling files).
+                        base = hits[0].rsplit("/", 1)[0] + "/" if "/" in hits[0] else ""
+                        for x in pieces:
+                            if not x or x in hits:
+                                continue
+                            if key(base + x) in raw_files:
+                                hits.append(base + x)
+                            elif "*" in x:
+                                hits += [f["path"] for k, f in raw_files.items()
+                                         if f["path"] not in hits and (matches(f["path"], [x]) or matches(f["path"], [base + x]))]
                 if len(hits) > len(best):
                     best = hits
                 elif (not best and i == 0 and "/" in whole and "*" not in whole
