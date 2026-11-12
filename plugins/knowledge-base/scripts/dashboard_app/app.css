@@ -93,8 +93,8 @@ h2.sec::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); min-width: 0; }
 .card h3 { margin: 0 0 10px; font-size: 15px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .card h4 { margin: 14px 0 6px; font-size: 11px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .07em; }
-.card.missing { border-style: dashed; background: transparent; box-shadow: none; }
-.card.missing p { margin: 0 0 8px; font-size: 13px; color: var(--ink-3); }
+.card.missing { border-style: dashed; border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); background: color-mix(in srgb, var(--warn-bg) 60%, var(--surface)); }
+.card.missing p { margin: 0 0 8px; font-size: 13px; color: var(--ink-2); }
 .muted { color: var(--ink-3); }
 .small { font-size: 13px; }
 .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -115,7 +115,7 @@ h2.sec::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .st-bad { background: var(--bad-bg); color: var(--bad); border-color: transparent; }
 .st-none { background: var(--none-bg); color: var(--none); border-color: transparent; }
 
-.exams { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.exams { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .exam { display: block; text-decoration: none; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); }
 .exam:hover { border-color: var(--violet); }
 .exam .d { font-size: 34px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; background: var(--accent); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -133,6 +133,8 @@ h2.sec::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .seg-b { background: var(--cyan); }
 .bar .mk { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--ink); }
 .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink-2); margin-top: 8px; }
+.legend .scale { display: inline-flex; align-items: center; gap: 4px; }
+.legend .scale i { margin-right: 0; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
 
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -169,13 +171,21 @@ ul.tasks li.done .g { color: var(--ink-3); text-decoration: line-through; }
 .spark .pass { stroke: var(--warn); stroke-width: 1.5; stroke-dasharray: 6 4; }
 .spark text { fill: var(--ink-2); font-size: 11px; }
 
-.heat { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 13px); grid-auto-columns: 13px; gap: 4px; overflow-x: auto; padding-bottom: 4px; justify-content: start; }
-.heat i { width: 13px; height: 13px; border-radius: 3px; background: var(--heat-0); display: block; }
+.heat { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 13px); grid-auto-columns: minmax(0, 1fr); gap: 4px; width: 100%; padding-bottom: 4px; }
+.heat i { height: 13px; border-radius: 3px; background: var(--heat-0); display: block; }
 .heat i.l1 { background: rgba(124, 92, 255, .30); }
 .heat i.l2 { background: rgba(124, 92, 255, .55); }
 .heat i.l3 { background: rgba(124, 92, 255, .80); }
 .heat i.l4 { background: linear-gradient(135deg, #7C5CFF, #22D3EE); }
 .heat i.fut { visibility: hidden; }
+
+.allok { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 220px; height: calc(100% - 30px); text-align: center; color: var(--good); }
+.allok svg { width: 96px; height: 96px; filter: drop-shadow(0 0 18px var(--good-bg)); }
+.allok circle { fill: var(--good-bg); stroke: var(--good); stroke-width: 2; }
+.allok path { fill: none; stroke: var(--good); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 44; stroke-dashoffset: 44; animation: tick .7s .15s ease-out forwards; }
+.allok b { font-size: 18px; }
+@keyframes tick { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) { .allok path { animation: none; stroke-dashoffset: 0; } }
 
 .kind { font-size: 11px; padding: 0 6px; border-radius: 6px; font-weight: 700; flex: none; }
 .k-raw { background: rgba(124, 92, 255, .14); color: var(--violet); }
