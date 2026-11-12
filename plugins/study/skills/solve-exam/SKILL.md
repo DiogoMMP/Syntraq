@@ -63,7 +63,7 @@ Solves a paper the way the course would: with its methods, its notation and its 
     - If the paper is an exam the exam map doesn't have yet, suggest running `exam-map`.
     - Don't touch the question catalog: its solution column is for official solutions in `raw/`.
 
-13. **Report**: the questions solved, those left out or answered outside the KB, disagreements with the official solution, what was verified and what wasn't, and whether the PDF was produced.
+13. **Report**: the questions solved, those left out or answered outside the KB, disagreements with the official solution, what was verified and what wasn't, and whether the PDF was produced. Before reporting, if the KB has a dashboard, log the run as [`references/dashboard.md`](../../references/dashboard.md) says (`event solve-exam "Resolveu <paper>" --area <course>`).
 
 ## Notes
 

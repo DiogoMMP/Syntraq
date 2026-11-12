@@ -44,7 +44,7 @@ Used on the **source** of a document (the markdown that the renderer turns into 
 
 7. **Check again.** Launch fresh checkers (never reuse the earlier ones: they remember the document) on the questions that were not `full`, in the same way, against the updated source. Repeat the fill-and-check at most **two more rounds**; stop earlier when everything that can be closed is closed.
 
-8. **Return to the caller, and report**: the coverage before and after (share of marks `full`), the questions still `partial`/`none` with exactly what is missing and why it couldn't be added (not in the KB / didn't fit the sheet), what was added per topic, and a note that the check is an estimate (a closed-book agent is not the student). When called on its own by the user, show the same report and ask whether to run `study-summary`/`exam-sheet` again, or to capture what the KB lacks as notes (`capture-note`) so `compile-wiki` brings it into the wiki.
+8. **Return to the caller, and report**: the coverage before and after (share of marks `full`), the questions still `partial`/`none` with exactly what is missing and why it couldn't be added (not in the KB / didn't fit the sheet), what was added per topic, and a note that the check is an estimate (a closed-book agent is not the student). When called on its own by the user, show the same report and ask whether to run `study-summary`/`exam-sheet` again, or to capture what the KB lacks as notes (`capture-note`) so `compile-wiki` brings it into the wiki. When called on its own and the KB has a dashboard, log it as [`references/dashboard.md`](../../references/dashboard.md) says (`event coverage-check "Cobertura <before>% → <after>%" --area <course>`); when called by another skill, leave the logging to that skill.
 
 ## Notes
 

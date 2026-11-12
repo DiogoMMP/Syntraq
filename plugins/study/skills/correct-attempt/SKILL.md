@@ -54,7 +54,7 @@ Marks what the user wrote the way the exam would, explains every lost mark, and 
 
 9. **Rebuild the progress record** `<progress>-<course>.md` exactly as `../../references/progress.md` describes (the plugin's `references/` folder): rebuilt from the frontmatter of every assessment in `<attempts>/` and every quiz session in `<quizzes>/`, never patched — by topic (attempts, last three, quiz, state, recurring mistakes), study priority crossed with exam weight, most frequent mistakes, and the history. Follow `templates/progress.md` for its layout.
 
-10. **Report**: the estimated grade, what to review first (from the study priority), and a next step — e.g. a mock exam focused on weak spots (`mock-exam`), or the summary sections of the 🔴 topics.
+10. **Report**: the estimated grade, what to review first (from the study priority), and a next step — e.g. a mock exam focused on weak spots (`mock-exam`), or the summary sections of the 🔴 topics. Before reporting, if the KB has a dashboard, log the attempt as [`references/dashboard.md`](../../references/dashboard.md) says (`event correct-attempt "<paper> — <grade>" --area <course>`). `progress.json` was already written in step 9.
 
 ## Questions about progress
 

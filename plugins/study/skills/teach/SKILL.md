@@ -40,7 +40,7 @@ The professor the user doesn't have at 11 pm: explains one part of the matter th
 
 7. **Close**: a recap of three to five lines (what to remember, in order), the one or two traps, and where to go next — the `quiz` to practise the topic, `flashcards` for the definitions, `study-summary` or `exam-sheet` for something to print, or the next part of the topic. Mention, once and briefly, where in the course material the topic lives (slide/page ranges) in case they want to read it themselves.
 
-8. **If something the KB lacked came up**, offer to capture it as a note (`capture-note`) so `compile-wiki` folds it into the wiki. Nothing else is saved: a lesson is not an output, and nothing goes into the wiki directly.
+8. **If something the KB lacked came up**, offer to capture it as a note (`capture-note`) so `compile-wiki` folds it into the wiki. Nothing else is saved: a lesson is not an output, and nothing goes into the wiki directly. If the KB has a dashboard, log the lesson as [`references/dashboard.md`](../../references/dashboard.md) says (`event teach "Explicou <topic>" --area <course>`), so it counts in the page's study rhythm.
 
 ## Notes
 

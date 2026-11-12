@@ -1,7 +1,7 @@
 {
   "name": "study",
   "description": "Study skills on top of a research knowledge base: map what past exams ask (exam-map), teach a topic like a professor in the chat (teach), write printable Word/PDF summaries weighted by the exams (study-summary), write dense two-column exam-consultation sheets (exam-sheet), check that a summary or sheet is enough to answer the past exams and fill what is missing (coverage-check), create mock exams with separate solutions (mock-exam), solve exams and exercise sheets with the course's own material (solve-exam), mark attempts while tracking weak spots (correct-attempt), run adaptive quizzes in the chat (quiz), make Anki flashcards (flashcards) and plan the study up to the exams (study-plan).",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "author": {
     "name": "Diogo Pereira",
     "email": "diogopereira812@gmail.com"

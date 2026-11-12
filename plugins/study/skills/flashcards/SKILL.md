@@ -54,7 +54,7 @@ Turns the course into cards worth reviewing every day: one fact each, grounded i
 
 9. **Index it.** One short row in the index table of `outputs/README.md` (type: flashcards, what for: one sentence, status: the KB's word for *final*, as listed in `outputs/README.md` — e.g. `final` in `pt-PT`), or update its date and version.
 
-10. **Report**: the cards per topic, how to import (Anki → File → Import → the file; the header lines set the deck, note types, tags and ids), and the cards tagged as removed, if any.
+10. **Report**: the cards per topic, how to import (Anki → File → Import → the file; the header lines set the deck, note types, tags and ids), and the cards tagged as removed, if any. Before reporting, if the KB has a dashboard, log the run as [`references/dashboard.md`](../../references/dashboard.md) says (`event flashcards "<N> flashcards de <scope>" --area <course> --count <N>`).
 
 ## Notes
 

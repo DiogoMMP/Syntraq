@@ -23,7 +23,7 @@
     {
       "name": "knowledge-base",
       "source": "./plugins/knowledge-base",
-      "description": "Personal LLM knowledge base: knowledge-base, compile-wiki, capture-note, adr-new, resume, wiki-lint.",
+      "description": "Personal LLM knowledge base: knowledge-base, compile-wiki, capture-note, adr-new, resume, wiki-lint, dashboard.",
       "category": "productivity"
     },
     {

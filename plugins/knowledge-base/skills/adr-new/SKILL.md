@@ -47,7 +47,7 @@ Captures an architecture decision in the standard Context/Decision/Consequences 
 
    Write the headings and the `ADR:` prefix in the KB's language (`language:` in `KB_GUIDE.md`, or the language the user is writing in) — e.g. for `pt-PT`: `# ADR: <Título>`, `## Contexto`, `## Decisão`, `## Consequências`. Frontmatter keys and `kind: decision` stay in English.
 
-5. **Confirm** with the filename and a note that `compile-wiki` will fold it into the wiki later.
+5. **Confirm** with the filename and a note that `compile-wiki` will fold it into the wiki later. If the KB has a dashboard, log it as [`references/dashboard-data.md`](../../references/dashboard-data.md) says (`event adr-new "<the decision's title>"`).
 
 ## Notes
 

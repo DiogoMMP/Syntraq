@@ -74,7 +74,7 @@ A calendar to the exam that spends the time where it pays: on the topics that we
     - **Remember the page** in the plan's frontmatter as `notion_page: <url>` so the update mode (below) edits that page in place instead of creating another one. The markdown plan stays the source of truth for dates and structure; in Notion only the checkboxes are expected to change.
     - Never delete Notion pages or change anything outside the plan's page.
 
-13. **Report**: the files written, hours per course, the mock exam dates, what didn't fit, the calendar outcome (calendar / `.ics` / none) and whether Notion got a page.
+13. **Report**: the files written, hours per course, the mock exam dates, what didn't fit, the calendar outcome (calendar / `.ics` / none) and whether Notion got a page. Before reporting, if the KB has a dashboard, add the plan to the dashboard's `settings.json` → `plans` (`{"path": "outputs/…/<plan>.md", "label": "<title>"}`) if it isn't there yet, write each course's exam dates into its `course.json` as [`references/dashboard.md`](../../references/dashboard.md) says, and log the run (`event study-plan "Plano até <last exam>"`).
 
 ## What do I have today?
 
@@ -92,7 +92,7 @@ For "atualiza o plano", "não fiz X", "fiz mais do que estava previsto", "estou 
    - tasks not done are moved to the next days that have free hours (buffer first), keeping the order the plan had (past exams oldest first, mock exams under exam conditions in the final stretch); if there is no room, say what doesn't fit and propose what to cut (📎 topics already 🟢 first), as in step 5 — don't cram;
    - past days stay as they were, with what was really done checked.
 4. **Show what changed** — a short before/after (which tasks moved where, what was cut, hours still free) — and wait for a yes.
-5. **Write the next version** of the same plan (same file, `version` and `updated` bumped, no changelog), then offer the delivery again: `.ics` and calendar (step 11 — the old events are still there, so say it), and Notion (step 12) by **updating the existing `notion_page` in place** instead of creating a new page, and asking before doing it.
+5. **Write the next version** of the same plan (same file, `version` and `updated` bumped, no changelog), then offer the delivery again: `.ics` and calendar (step 11 — the old events are still there, so say it), and Notion (step 12) by **updating the existing `notion_page` in place** instead of creating a new page, and asking before doing it. If the KB has a dashboard, update the courses' `course.json` if exam dates changed, and log the update as [`references/dashboard.md`](../../references/dashboard.md) says (`event study-plan "Plano atualizado: N tarefas feitas"`). The page reads the ticks from the plan itself.
 
 ## Notes
 

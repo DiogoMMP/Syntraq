@@ -41,7 +41,7 @@ A tutor in the chat: asks, waits, nudges when the answer is wrong, explains with
 
 5. **Save the session** following `templates/session.md` in the course's progress folder, as `../../references/progress.md` (the plugin's `references/` folder) lays out — e.g. `outputs/<area>/estudo/progresso-<course>/quizzes/quiz-NN.md`, `NN` the next session number. Its frontmatter records, per question, the topic, kind, a one-line summary of what was asked, the result and the mistake kinds.
 
-6. **Rebuild the progress record** exactly as `references/progress.md` describes — from every assessment and quiz session, never patched. Quiz results only decide a topic's state while it has no marked attempt.
+6. **Rebuild the progress record** exactly as `references/progress.md` describes — from every assessment and quiz session, never patched. Quiz results only decide a topic's state while it has no marked attempt. If the KB has a dashboard, log the session as [`references/dashboard.md`](../../references/dashboard.md) says (`event quiz "Quiz de <topics>: <score>" --area <course> --count <questions>`).
 
 ## Notes
 

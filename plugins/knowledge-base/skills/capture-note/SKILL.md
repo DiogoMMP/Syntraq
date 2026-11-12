@@ -38,7 +38,7 @@ Frictionless note-taking: write down a thought now, let `compile-wiki` organize 
    - `kind: message` when it's something another person sent or said — a teacher, an expert, a colleague ("o perito respondeu…", "o professor disse…"), with `from:` naming who (a role is enough, e.g. `from: perito`).
    - `source:` — the `raw/` file it's about. Paste AI answers and other people's messages verbatim rather than "cleaning them up". If `notes/` has to be created in a research KB, use the wording of `knowledge-base/templates/research-notes-README.md` for its `README.md` (in the KB's language).
 
-5. **Confirm** with one line — the note's filename and a note that `compile-wiki` will fold it into the wiki later. Don't over-narrate; this should feel instant.
+5. **Confirm** with one line — the note's filename and a note that `compile-wiki` will fold it into the wiki later. Don't over-narrate; this should feel instant. If the KB has a dashboard, log it silently as [`references/dashboard-data.md`](../../references/dashboard-data.md) says (`event capture-note "<the note's title>"`).
 
 ## Notes
 

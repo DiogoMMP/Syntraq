@@ -13,6 +13,8 @@ Skills de estudo que trabalham por cima de uma knowledge base em modo research (
 4. **`correct-attempt`** corrige as tuas tentativas e mantém o registo de pontos fracos, que o `quiz`, o `mock-exam`, o `study-summary` e o `study-plan` usam.
 5. **`study-plan`** junta tudo num calendário até aos exames.
 
+Se a KB tiver um dashboard (o skill [`dashboard`](../knowledge-base/README.md) do plugin knowledge-base), cada skill regista no fim o que fez. O `exam-map`, o `correct-attempt`, o `quiz` e o `study-plan` escrevem também os dados da UC: tópicos e pesos, estado de cada tópico, notas, datas de exame e nota mínima. Assim, a página de cada UC no dashboard atualiza-se sozinha ([`references/dashboard.md`](references/dashboard.md)).
+
 ## Instalação
 
 ```text
