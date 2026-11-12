@@ -15,7 +15,7 @@ Estas regras valem para o texto do documento. O tom da conversa com o utilizador
 
 - Texto impessoal. Nunca primeira pessoa: "eu fiz", "vou apresentar", "apresentamos", "posso concluir". Escreve-se "O projeto é implementado", "É possível concluir", "Segue-se a apresentação".
 - Presente. Nem passado nem futuro: "foi implementado", "concluiu-se", "vai ser apresentado no capítulo 3" passam a "é implementado", "conclui-se", "é apresentado no capítulo 3".
-- A reescrita mantém o sentido temporal. Um plano não pode passar a parecer feito: o que é mesmo futuro (trabalho futuro, cronograma, testes ainda por fazer) escreve-se no presente sem mudar o estado, por exemplo "vai ser testado" passa a "está previsto testar" ou "o cronograma prevê", nunca a "é testado". Na dúvida sobre se algo já aconteceu, `[Dúvida]` em vez de reescrever.
+- A reescrita mantém o sentido temporal. Um plano não pode passar a parecer feito: o que é mesmo futuro (trabalho futuro, cronograma, testes ainda por fazer) escreve-se no presente sem mudar o estado, por exemplo "vai ser testado" passa a "está previsto testar" ou "o cronograma prevê", nunca a "é testado". Na dúvida sobre se algo já aconteceu, `[Claude · Dúvida]` em vez de reescrever.
 - Exceção razoável: o que um autor publicou num ano concreto. Tratar como sugestão de baixa gravidade, não como erro.
 
 ## 3. Objetividade e ritmo
