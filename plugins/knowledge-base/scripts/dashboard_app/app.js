@@ -546,6 +546,9 @@
     var comp = D.compiled || {}, ex = (D.raw && D.raw.exclude) || [], files = [], skipped = 0;
     var compiledPrefixes = Object.keys(comp);
     function cdate(k) { var v = comp[k]; return Array.isArray(v) ? v[0] : v; }
+    // "last compiled" is YYYY-MM-DDTHH:MM (compared to the minute) or, in old rows, a bare date (compared by day)
+    function upToDate(mt, c) { return !!c && (c.length > 10 ? mt <= c : mt.slice(0, 10) <= c); }
+    function isoMin(d) { var h = d.getHours(), m = d.getMinutes(); return iso(d) + "T" + (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m; }
     function cpath(k) { var v = comp[k]; return Array.isArray(v) ? v[1] : k; }
     async function countOnly(dir) {
       // an excluded folder: its files count as out of scope, without reading their dates
@@ -568,7 +571,7 @@
           subs.push(walk(h, p));
         } else {
           if (!prefix && /^readme\.md$/i.test(name)) continue;
-          gets.push(h.getFile().then(function (pp) { return function (f) { files.push({ path: pp.normalize("NFC"), mtime: iso(new Date(f.lastModified)) }); }; }(p)));
+          gets.push(h.getFile().then(function (pp) { return function (f) { var d = new Date(f.lastModified); files.push({ path: pp.normalize("NFC"), mtime: iso(d), mt: isoMin(d) }); }; }(p)));
         }
       }
       await Promise.all(gets.concat(subs));
@@ -579,7 +582,7 @@
       var k = key(f.path); seen[k] = 1;
       var has = Object.prototype.hasOwnProperty.call(comp, k);
       if (!has && matches(f.path, ex)) return;
-      f.state = has && cdate(k) && f.mtime <= cdate(k) ? "compiled" : has ? "changed" : "pending";
+      f.state = has && upToDate(f.mt, cdate(k)) ? "compiled" : has ? "changed" : "pending";
       srcs.push(f);
     });
     function tally(list) { var o = { total: list.length, compiled: 0, pending: 0, changed: 0 }; list.forEach(function (s) { o[s.state]++; }); return o; }

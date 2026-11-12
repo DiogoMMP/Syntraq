@@ -43,6 +43,9 @@ BOOKKEEPING = {"assessment", "quiz", "progress"}   # study bookkeeping, never "m
 OUTPUT_EXTS = {"md", "pdf", "docx", "pptx", "xlsx", "html", "ics", "apkg", "txt", "csv"}
 HEAT_SKIP_EXTS = {"py", "pyc", "pl", "json", "png", "jpg", "jpeg", "svg"}
 DATE_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
+# "Last compiled" in wiki/sources.md: YYYY-MM-DDTHH:MM (local time), or a bare
+# date in rows written before compile-wiki recorded the time.
+COMPILED_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2})(?:[T ](\d{1,2}):(\d{2}))?\b")
 DAY_HEADING_RE = re.compile(r"^#{2,4}\s+(\d{4}-\d{2}-\d{2})\b(.*)$")
 CHECK_RE = re.compile(r"^\s*[-*]\s+\[([ xX])\]\s+(.*)$")
 WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)(?:#[^\]|]*)?(?:\|[^\]]*)?\]\]")
@@ -73,6 +76,30 @@ def rel(p: Path, root: Path) -> str:
 
 def mtime_date(p: Path) -> str:
     return dt.date.fromtimestamp(p.stat().st_mtime).isoformat()
+
+
+def mtime_minute(p: Path) -> str:
+    return dt.datetime.fromtimestamp(p.stat().st_mtime).strftime("%Y-%m-%dT%H:%M")
+
+
+def compiled_value(cells) -> str:
+    """The last "last compiled" value in a manifest row, normalised to
+    YYYY-MM-DDTHH:MM, or YYYY-MM-DD for an old date-only row."""
+    found = [m for c in cells for m in COMPILED_RE.finditer(c)]
+    if not found:
+        return ""
+    d, h, mi = found[-1].groups()
+    return f"{d}T{int(h):02d}:{mi}" if h else d
+
+
+def up_to_date(mtime_min: str, compiled: str) -> bool:
+    """True when a file didn't change after its "last compiled" value: to the
+    minute for a timestamp, by day for an old date-only row."""
+    if not compiled:
+        return False
+    if len(compiled) > 10:
+        return mtime_min <= compiled
+    return mtime_min[:10] <= compiled
 
 
 def walk(root: Path):
@@ -288,9 +315,9 @@ def sources_manifest(kb: Path, raw_files: dict):
                 if any(c.strip() for c in cells):
                     unmatched += 1  # glob rows, rows about notes/, files we can't place
                 continue
-            dates = [d for c in cells for d in DATE_RE.findall(c)]
+            compiled = compiled_value(cells)
             for path in best:
-                rows[key(path)] = {"path": path, "compiled": dates[-1] if dates else ""}
+                rows[key(path)] = {"path": path, "compiled": compiled}
     return rows, unmatched
 
 
@@ -338,7 +365,8 @@ def collect(kb: Path, settings: dict) -> dict:
         r = rel(p, raw_root)
         if key(r) == "readme.md":
             continue
-        raw_all[key(r)] = {"path": r, "ext": p.suffix.lower().lstrip(".") or "—", "mtime": mtime_date(p)}
+        raw_all[key(r)] = {"path": r, "ext": p.suffix.lower().lstrip(".") or "—", "mtime": mtime_date(p),
+                           "mtime_min": mtime_minute(p)}
 
     # A file with a manifest row was compiled on purpose, so an exclusion never
     # hides it: exclusions only drop files nobody compiled.
@@ -348,7 +376,7 @@ def collect(kb: Path, settings: dict) -> dict:
         row = manifest.get(k)
         if not row and matches(f["path"], exclude):
             continue
-        if row and row["compiled"] and f["mtime"] <= row["compiled"]:
+        if row and up_to_date(f["mtime_min"], row["compiled"]):
             state = "compiled"
         elif row:
             state = "changed"
@@ -659,7 +687,8 @@ def cmd_build(kb: Path) -> Path:
                 # asks for this real folder instead when counting live.
                 "target": nfc(os.path.realpath(kb / "raw")) if (kb / "raw").exists() else "",
                 "is_link": (kb / "raw").exists() and nfc(os.path.realpath(kb / "raw")) != nfc(str((kb / "raw").absolute()))},
-        # For the live count in the browser: every compiled raw/ path and its date.
+        # For the live count in the browser: every compiled raw/ path and its
+        # "last compiled" value (YYYY-MM-DDTHH:MM, or a bare date in old rows).
         "compiled": {k: [r["compiled"], r["path"]] for k, r in c["manifest"].items()},
         "totals": {
             "raw_files": len(c["raw_all"]), "sources": len(c["sources"]), "compiled": st["compiled"],
