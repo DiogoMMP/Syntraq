@@ -112,21 +112,24 @@ claude --plugin-dir ./plugins/dev-tools
 syntraq/
 ├── .claude-plugin/marketplace.json   # o catálogo: nome do marketplace e a lista de plugins
 ├── assets/                           # banner do README (versões clara e escura)
+├── LICENSE                           # licença MIT
 └── plugins/
     └── <plugin>/
         ├── .claude-plugin/plugin.json   # nome, descrição e versão do plugin
         ├── README.md                    # as skills do plugin em detalhe
         ├── skills/<skill>/SKILL.md      # cada skill, com templates/ ou reference/ quando precisa
-        └── scripts/                     # scripts partilhados pelas skills (study e reports)
+        ├── references/                  # regras e formatos partilhados pelas skills (knowledge-base, study, reports)
+        ├── scripts/                     # scripts partilhados pelas skills (knowledge-base, study, reports)
+        └── assets/                      # imagens usadas no README do plugin (knowledge-base)
 ```
 
 ---
 
 ## Contribuir
 
-- **Branches** — nada vai diretamente para a `main`: cada trabalho vive numa `feature/<slug>` e entra por pull request (`create-pr`).
+- **Branches** — nada vai diretamente para a `main`: cada trabalho vive numa `feature/<slug>` (ou `fix/<slug>`) e entra por pull request (`create-pr`).
 - **Commits** — Conventional Commits em inglês, com o tipo e o plugin no scope: `feat(study): add mock-exam…`, `fix(knowledge-base): …`.
-- **Versões** — cada plugin tem a sua, em `plugins/<plugin>/.claude-plugin/plugin.json`, e sobe num commit `chore(release): bump <plugin> to X.Y.Z` à parte (`commit-push` trata disso).
+- **Versões** — cada plugin tem a sua, em `plugins/<plugin>/.claude-plugin/plugin.json`, e sobe num commit `chore(release): bump <plugin> to X.Y.Z` à parte, antes de abrir o PR (`commit-push` trata disso).
 - **Validação** — antes de um commit, `claude plugin validate ./plugins/<plugin>` e `claude plugin validate .` para o marketplace.
 
 ---
