@@ -1,7 +1,7 @@
 {
   "name": "knowledge-base",
   "description": "Personal LLM-driven knowledge base skills: scaffold, capture notes and ADRs, compile and lint the wiki, and resume a project.",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "author": {
     "name": "Diogo Pereira",
     "email": "diogopereira812@gmail.com"
