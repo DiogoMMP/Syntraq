@@ -290,7 +290,6 @@
       var weeks = Math.max(8, Math.min(104, Math.floor((w + 4) / 17)));
       if (String(weeks) === el.getAttribute("data-weeks")) return;
       el.setAttribute("data-weeks", weeks);
-      el.style.setProperty("--wk", weeks);
       el.innerHTML = heatCells(weeks);
     });
   }
