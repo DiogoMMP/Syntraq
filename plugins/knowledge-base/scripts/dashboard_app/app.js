@@ -146,12 +146,17 @@
   }
   function isStudyKB() { return (D.plans || []).length > 0 || AREAS.some(function (a) { return hasStudy(a) || a.course.pass_grade != null || (a.course.exams || []).length; }); }
   function hasStudy(a) { return examsOf(a).length || topicsOf(a).length || (a.attempts || []).length || (a.materials || []).some(function (m) { return /summary|sheet|mock|solution|flashcard|study|resumo|folha|simulado|resolu/i.test(m.type); }); }
+  function wordIn(text, word) {
+    // the course name as a whole word: "so" matches "so — memória", never "resolver"
+    var w = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp("(^|[^\\p{L}\\p{N}])" + w + "($|[^\\p{L}\\p{N}])", "u").test(text);
+  }
   function planFor(a) {
     var ns = names(a), out = [];
     (D.plans || []).forEach(function (p) {
       var whole = (p.courses || []).length === 1 && ns.indexOf(key(p.courses[0])) >= 0;
       var days = p.days.map(function (d) {
-        var ts = whole ? d.tasks : d.tasks.filter(function (t) { var k = key(t.text); return ns.some(function (n) { return n && k.indexOf(n) >= 0; }); });
+        var ts = whole ? d.tasks : d.tasks.filter(function (t) { var k = key(t.text); return ns.some(function (n) { return n && wordIn(k, n); }); });
         return { date: d.date, tasks: ts };
       }).filter(function (d) { return d.tasks.length; });
       if (days.length) out.push({ label: p.label, path: p.path, days: days });
@@ -314,7 +319,10 @@
       var t = tps.map(function (t) { var ar = (a.articles || []).filter(function (x) { return key(x.name) === key(t.article || t.name); })[0]; return '<div class="topic"><span class="nm">' + (ar ? artLink({ path: ar.path, name: t.name }) : esc(t.name)) + '</span><span class="small muted">' + esc(t.band || "") + (t.share ? " " + num(t.share) + "%" : "") + "</span>" + stTag(t.state, t.note) + "</div>"; });
       cards += card(esc(T.priorities), t.slice(0, 10).join("") + (t.length > 10 ? "<details><summary>+" + (t.length - 10) + "</summary>" + t.slice(10).join("") + "</details>" : ""));
     }
-    if ((a.attempts || []).length) cards += card(esc(T.grades) + ' <span class="muted small">' + num(a.attempts.length) + " " + esc(T.attempts) + (a.quizzes ? " · " + num(a.quizzes) + " " + esc(T.quizzes) : "") + "</span>", spark(a.attempts, scale, a.course.pass_grade) + (a.course.pass_rules ? '<p class="small muted" style="margin:6px 0 0">' + esc(T.passGrade) + ": " + esc(a.course.pass_rules) + "</p>" : ""));
+    var passInfo = a.course.pass_rules ? '<p class="small muted" style="margin:6px 0 0">' + esc(T.passGrade) + ": " + esc(a.course.pass_rules) + "</p>"
+      : (a.course.pass_grade != null && !(a.attempts || []).length ? '<p class="small muted" style="margin:6px 0 0">' + esc(T.passGrade) + ": " + grade(a.course.pass_grade) + "</p>" : "");
+    if ((a.attempts || []).length) cards += card(esc(T.grades) + ' <span class="muted small">' + num(a.attempts.length) + " " + esc(T.attempts) + (a.quizzes ? " · " + num(a.quizzes) + " " + esc(T.quizzes) : "") + "</span>", spark(a.attempts, scale, a.course.pass_grade) + passInfo);
+    else if (passInfo) cards += card(esc(T.grades), passInfo);
     pl.forEach(function (p) { cards += card(esc(p.label), planBlock(p)); });
     if ((a.materials || []).length) cards += card(esc(T.material), '<ul class="list">' + a.materials.map(function (m) { return '<li><span class="kind k-output">' + esc(m.type) + '</span><span class="g"><a class="link" href="' + esc(href(m.path)) + '">' + esc(m.title) + "</a></span>" + '<span class="small muted">' + (m.version ? "v" + esc(m.version) + " · " : "") + esc(m.updated ? rel(m.updated) : "") + "</span></li>"; }).join("") + "</ul>");
     var s = a.sources;
@@ -415,7 +423,7 @@
   // ------------------------------------------------------------ shell
   var LOGO = '<svg viewBox="0 0 112 112" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7C5CFF"/><stop offset="1" stop-color="#22D3EE"/></linearGradient></defs><path d="M56 4 L102 30 V82 L56 108 L10 82 V30 Z" fill="none" stroke="url(#lg)" stroke-width="7" stroke-linejoin="round"/><path d="M62 22 L36 62 H54 L48 92 L76 50 H58 Z" fill="url(#lg)"/></svg>';
   function sidebar(route) {
-    function a(h, label, cnt) { return '<a href="' + h + '" class="' + (route === h ? "on" : "") + '">' + label + (cnt != null && cnt !== "" ? '<span class="cnt">' + cnt + "</span>" : "") + "</a>"; }
+    function a(h, label, cnt) { return '<a href="' + esc(h) + '" class="' + (route === h ? "on" : "") + '">' + label + (cnt != null && cnt !== "" ? '<span class="cnt">' + cnt + "</span>" : "") + "</a>"; }
     var act = AREAS.filter(isActive), arch = AREAS.filter(function (x) { return !isActive(x); });
     function ucLink(x) { var up = examsOf(x).filter(function (e) { return diff(e.date) >= 0; })[0]; return a("#/uc/" + x.slug, esc(x.name), up ? num(diff(up.date), 0) + "d" : ""); }
     var tot = D.totals || {}, gen = String(D.generated || ""), age = gen ? -diff(gen.slice(0, 10)) : 0;
@@ -429,6 +437,7 @@
       (age >= 7 ? '<span class="stale">' + esc(T.stale) + "</span>" : "") + '<span>' + esc(T.footer) + "</span></div></aside>";
   }
   function render() {
+    TODAY = iso(new Date());
     var route = location.hash || "#/", page;
     if (/^#\/uc\//.test(route)) page = pageCourse(areaBySlug(decodeURIComponent(route.slice(5))));
     else if (route === "#/sources") page = pageSources();
@@ -534,8 +543,19 @@
     var r = await rawHandle();
     if (!r) { live.state = live.root ? "needraw" : "off"; render(); return; }
     live.state = "on";
-    var comp = D.compiled || {}, ex = (D.raw && D.raw.exclude) || [], files = [];
+    var comp = D.compiled || {}, ex = (D.raw && D.raw.exclude) || [], files = [], skipped = 0;
     var compiledPrefixes = Object.keys(comp);
+    function cdate(k) { var v = comp[k]; return Array.isArray(v) ? v[0] : v; }
+    function cpath(k) { var v = comp[k]; return Array.isArray(v) ? v[1] : k; }
+    async function countOnly(dir) {
+      // an excluded folder: its files count as out of scope, without reading their dates
+      var subs = [];
+      for await (var entry of dir.entries()) {
+        if (entry[0].charAt(0) === ".") continue;
+        if (entry[1].kind === "directory") subs.push(countOnly(entry[1])); else skipped++;
+      }
+      await Promise.all(subs);
+    }
     async function walk(dir, prefix) {
       var subs = [], gets = [];
       for await (var entry of dir.entries()) {
@@ -544,7 +564,7 @@
         var p = prefix ? prefix + "/" + name : name;
         if (h.kind === "directory") {
           var k = key(p);
-          if (matches(p + "/x", ex) && !compiledPrefixes.some(function (c) { return c.indexOf(k + "/") === 0; })) continue;
+          if (matches(p + "/x", ex) && !compiledPrefixes.some(function (c) { return c.indexOf(k + "/") === 0; })) { subs.push(countOnly(h)); continue; }
           subs.push(walk(h, p));
         } else {
           if (!prefix && /^readme\.md$/i.test(name)) continue;
@@ -559,14 +579,15 @@
       var k = key(f.path); seen[k] = 1;
       var has = Object.prototype.hasOwnProperty.call(comp, k);
       if (!has && matches(f.path, ex)) return;
-      f.state = has && comp[k] && f.mtime <= comp[k] ? "compiled" : has ? "changed" : "pending";
+      f.state = has && cdate(k) && f.mtime <= cdate(k) ? "compiled" : has ? "changed" : "pending";
       srcs.push(f);
     });
     function tally(list) { var o = { total: list.length, compiled: 0, pending: 0, changed: 0 }; list.forEach(function (s) { o[s.state]++; }); return o; }
     var t = tally(srcs), tot = D.totals;
-    tot.raw_files = files.length; tot.sources = t.total; tot.compiled = t.compiled; tot.pending = t.pending; tot.changed = t.changed; tot.excluded = files.length - t.total;
+    tot.raw_files = files.length; tot.sources = t.total; tot.compiled = t.compiled; tot.pending = t.pending; tot.changed = t.changed; tot.excluded = files.length - t.total + skipped; tot.raw_files += skipped;
     var removed = Object.keys(comp).filter(function (k) { return !seen[k]; });
     tot.removed = removed.length;
+    D.removed = removed.slice(0, 20).map(cpath);
     var pend = srcs.filter(function (s) { return s.state !== "compiled"; }).sort(function (x, y) { return x.mtime < y.mtime ? 1 : -1; });
     D.pending = pend.slice(0, 40);
     AREAS.forEach(function (a) { var l = srcs.filter(function (s) { return (a.raw || []).length && under(s.path, a.raw); }); a.sources = tally(l); a.pending = l.filter(function (s) { return s.state !== "compiled"; }).sort(function (x, y) { return x.mtime < y.mtime ? 1 : -1; }).slice(0, 40); });

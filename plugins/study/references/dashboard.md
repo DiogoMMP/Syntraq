@@ -24,7 +24,7 @@ Each file is owned by the skills listed, which rewrite it whole from their own r
 }
 ```
 
-- `study-plan` writes `exams` from the dates it put in the plan.
+- `study-plan` writes the dates it put in the plan into `exams`. It merges them into the list: it replaces only the entries that came from this plan (same `source`) and the sittings it now dates, and keeps the dates other plans or the user wrote.
 - `exam-map` writes `grade_scale`, `pass_grade` and `pass_rules` when the course's rules state them (exam headers, the course outline, the teacher's rules). `grade_scale` may also come from the assessments' `scale`.
 
 **Pass mark.** `pass_grade` is the final grade needed to pass the course, on `grade_scale`. It is never assumed: it isn't always 9.5. A minimum on one component (e.g. "exame 50%, nota mínima de 7,5") is not the course's pass mark. Put it in `pass_rules`, a short line the page shows, and set `pass_grade` only if the rules also state the final mark (the page then draws it on the grades chart). With no stated rule, leave both out, and the page asks the user for the pass mark.
@@ -33,7 +33,7 @@ Each file is owned by the skills listed, which rewrite it whole from their own r
 - A document's year is the one written on it or in its name (`2025-2026`). With none, it's the year of the folder it sits in, else the year its file date falls in.
 - A document from an earlier academic year gives no date.
 - A date without a year (e.g. "18th January" on a slide) gets the year that date falls in within the document's academic year, with `"inferred": true`, and only when the document is from the current academic year. If weekdays are given, they must agree; if not, give no date. The page marks inferred dates.
-- The user may also tell any skill an exam date or a pass mark. Write it here with `"source": "user"`. Skills never overwrite a value whose source is `user`.
+- The user may also tell any skill an exam date or a pass mark. Write it here with `"source": "user"`. A value from the user is never replaced by one a skill found or inferred, but a new value the user gives explicitly ("the exam moved to the 20th") replaces it, keeping `"source": "user"`.
 
 **`exam-map.json`** is written by `exam-map`, from the exams article it just wrote:
 

@@ -90,9 +90,9 @@ Monta o dashboard de uma KB em modo research: um `dashboard.html` na raiz que ab
 
 Tudo o resto vive em `.dashboard/`, uma pasta que o Obsidian ignora:
 
-- `settings.json` tem as decisões deste skill (áreas, exclusões, o tema);
-- `courses/<uc>/*.json` é escrito pelos skills de estudo;
-- `activity/` tem um ficheiro por evento, que cada skill regista com `python .dashboard/dashboard.py event …`;
+- `data/settings.json` tem as decisões deste skill (áreas, exclusões, o tema);
+- `data/courses/<uc>/*.json` é escrito pelos skills de estudo;
+- `data/activity/` tem um ficheiro por evento, que cada skill regista com `python .dashboard/dashboard.py event …`;
 - `data.js` é o snapshot que a página lê, refeito a cada evento.
 
 Assim o dashboard mantém-se atualizado sozinho. Este skill só volta a ser preciso na primeira vez, depois de uma atualização do plugin ou quando aparecem pastas ou UCs novas. Decide tudo sem fazer perguntas. O que não encontra (uma data de exame, a nota mínima) aparece como cartão "em falta", com o pedido pronto a copiar.

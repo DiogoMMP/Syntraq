@@ -54,7 +54,7 @@ Everything else updates itself. If the user asks to "update the dashboard" and n
    - `notes_pending`, and `outputs`: docs by `type` and the purpose-folder registry of `outputs/README.md`;
    - `plans`: every output written as a day-by-day plan (dated `###` headings with `- [ ]` tasks), whatever its `type`.
 
-   If `settings.json` already covers everything the scan shows (no new folder outside every area and exclusion, no new progress record, exams article or plan), only run `python .dashboard/dashboard.py build`, report, and stop. Don't log an event for a run that changed nothing.
+   If `settings.json` already covers everything the scan shows (no new folder outside every area and exclusion, no new progress record, exams article or plan) **and** no course file step 7 would seed is missing (a studied course with an exams article but no `exam-map.json`, or a progress record but no `progress.json`), only run `python .dashboard/dashboard.py build`, report, and stop. Don't log an event for a run that changed nothing.
 
 4. **Name the KB.** `kb.name` is the KB's folder name written as a proper name in the KB's language, shown at the top of the sidebar. Don't just swap dashes for spaces: restore what the name shortens, e.g. `base-conhecimento` becomes `Base de Conhecimento` and `kb_estudo` becomes `KB de Estudo`. `kb.title` is the overview's heading: `topic:` from `KB_GUIDE.md`, shortened to how the KB itself refers to it (an acronym it uses, for example). Put the full `topic:` in `kb.subtitle` when the title shortens it.
 

@@ -28,6 +28,7 @@ import re
 import shutil
 import sys
 import unicodedata
+import uuid
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -75,11 +76,21 @@ def mtime_date(p: Path) -> str:
 
 
 def walk(root: Path):
-    """Every file under root, following junctions/symlinks (raw/ is often one)."""
+    """Every file under root, following junctions/symlinks (raw/ is often one).
+
+    A link that leads back to a folder already visited (a cycle) is skipped.
+    """
     if not root.exists():
         return
+    seen = set()
     for dirpath, dirnames, filenames in os.walk(root, followlinks=True):
-        dirnames[:] = sorted(d for d in dirnames if not d.startswith("."))
+        real = os.path.realpath(dirpath)
+        if real in seen:
+            dirnames[:] = []
+            continue
+        seen.add(real)
+        dirnames[:] = sorted(d for d in dirnames if not d.startswith(".")
+                             and os.path.realpath(os.path.join(dirpath, d)) not in seen)
         for f in sorted(filenames):
             if f.startswith(".") or f.startswith("~$") or f.lower() in ALWAYS_SKIP:
                 continue
@@ -103,7 +114,7 @@ def read_json(p: Path, default=None):
 
 def write_json(p: Path, data) -> None:
     p.parent.mkdir(parents=True, exist_ok=True)
-    tmp = p.with_suffix(p.suffix + ".tmp")
+    tmp = p.with_name(f"{p.name}.{os.getpid()}.tmp")
     tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     os.replace(tmp, p)
 
@@ -435,7 +446,7 @@ def cmd_scan(kb: Path) -> dict:
     for f in c["out_files"]:
         if f["ext"] == "md":
             p = parse_plan(kb / "outputs" / f["path"])
-            if p and len(p["days"]) >= 3:
+            if p and p["days"]:
                 tasks = [t for d in p["days"] for t in d["tasks"]]
                 plans.append({"path": "outputs/" + f["path"], "title": p["title"], "courses": p["courses"],
                               "exams": p["exams"], "first_day": p["days"][0]["date"],
@@ -649,7 +660,7 @@ def cmd_build(kb: Path) -> Path:
                 "target": nfc(os.path.realpath(kb / "raw")) if (kb / "raw").exists() else "",
                 "is_link": (kb / "raw").exists() and nfc(os.path.realpath(kb / "raw")) != nfc(str((kb / "raw").absolute()))},
         # For the live count in the browser: every compiled raw/ path and its date.
-        "compiled": {k: r["compiled"] for k, r in c["manifest"].items()},
+        "compiled": {k: [r["compiled"], r["path"]] for k, r in c["manifest"].items()},
         "totals": {
             "raw_files": len(c["raw_all"]), "sources": len(c["sources"]), "compiled": st["compiled"],
             "pending": st["pending"], "changed": st["changed"], "excluded": len(c["raw_all"]) - len(c["sources"]),
@@ -668,7 +679,7 @@ def cmd_build(kb: Path) -> Path:
             "files": [{k: v for k, v in f.items() if k != "fm"} | (
                 {"title": str(f["fm"].get("title") or ""), "version": str(f["fm"].get("version") or ""),
                  "status": str(f["fm"].get("status") or "")} if "fm" in f else {})
-                for f in c["out_files"] if f["ext"] in OUTPUT_EXTS and not f["path"].lower().endswith("readme.md")][:600],
+                for f in c["out_files"] if f["ext"] in OUTPUT_EXTS and Path(f["path"]).name.lower() != "readme.md"][:600],
         },
         "areas": areas,
         "plans": plans,
@@ -680,7 +691,9 @@ def cmd_build(kb: Path) -> Path:
     }
     out = kb / DASH / "data.js"
     payload = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
-    out.write_text("window.KB_DASHBOARD = " + payload + ";\n", encoding="utf-8")
+    tmp = out.with_name(f"{out.name}.{os.getpid()}.tmp")
+    tmp.write_text("window.KB_DASHBOARD = " + payload + ";\n", encoding="utf-8")
+    os.replace(tmp, out)  # the page never reads a half-written file
     return out
 
 
@@ -730,12 +743,8 @@ def cmd_event(kb: Path, args: list) -> Path:
         else:
             sys.exit(f"unknown option {flag}")
         i += 2
-    folder = kb / DASH / "data" / "activity"
-    stem, n = f"{now.strftime('%Y-%m-%dT%H-%M-%S')}-{slug(skill)}", 1
-    target = folder / f"{stem}.json"
-    while target.exists():
-        n += 1
-        target = folder / f"{stem}-{n}.json"
+    # A random suffix keeps two events of the same skill in the same second apart.
+    target = kb / DASH / "data" / "activity" / f"{now.strftime('%Y-%m-%dT%H-%M-%S')}-{slug(skill)}-{uuid.uuid4().hex[:6]}.json"
     write_json(target, e)
     return target
 
