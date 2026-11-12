@@ -263,20 +263,35 @@
     if (pass != null) info += (info ? " · " : "") + (lg.grade >= pass ? '<span class="tag st-good">' + esc(T.above) + "</span>" : '<span class="tag st-bad">' + esc(T.below) + "</span>") + " (" + esc(T.passGrade) + " " + grade(pass) + ")";
     return s + (info ? '<div class="small muted" style="margin-top:6px">' + info + "</div>" : "");
   }
-  function heatmap(weeks) {
-    var h = D.heat || {}, end = parse(TODAY), start = new Date(end); start.setDate(end.getDate() - (weeks * 7 - 1) - ((end.getDay() + 6) % 7 === 6 ? 0 : 0));
-    var dow = (start.getDay() + 6) % 7; start.setDate(start.getDate() - dow);
+  // The grid fills the width of its card: fitHeat() works out how many weeks fit and rebuilds the cells; the number passed here is only the first guess.
+  function heatCells(weeks) {
+    var h = D.heat || {}, end = parse(TODAY), start = new Date(end);
+    start.setDate(end.getDate() - (weeks * 7 - 1));
+    start.setDate(start.getDate() - (start.getDay() + 6) % 7);
     var max = 0; Object.keys(h).forEach(function (k) { max = Math.max(max, h[k]); });
-    var cells = "", d = new Date(start), streak = 0;
-    while (d <= end || (d.getDay() + 6) % 7 !== 0) {
+    var cells = "", d = new Date(start);
+    while (true) {
       var k = iso(d), v = h[k] || 0, lv = !v ? 0 : v <= max * .25 ? 1 : v <= max * .5 ? 2 : v <= max * .75 ? 3 : 4;
       cells += '<i class="' + (d > end ? "fut" : "l" + lv) + '" data-tip="' + esc(fmtDate(k) + " · " + v) + '"></i>';
       d.setDate(d.getDate() + 1);
       if (d > end && (d.getDay() + 6) % 7 === 0) break;
     }
+    return cells;
+  }
+  function heatmap(weeks) {
+    var h = D.heat || {}, streak = 0;
     var c = parse(TODAY); if (!h[iso(c)]) c.setDate(c.getDate() - 1);
     while (h[iso(c)]) { streak++; c.setDate(c.getDate() - 1); }
-    return '<div class="heat">' + cells + '</div><div class="legend"><span>🔥 ' + num(streak) + " " + esc(streak === 1 ? T.streak1 : T.streak) + '</span><span class="sp"></span><span>' + esc(T.less) + ' <i style="background:var(--heat-0)"></i><i style="background:rgba(124,92,255,.3)"></i><i style="background:rgba(124,92,255,.55)"></i><i style="background:rgba(124,92,255,.8)"></i><i style="background:var(--accent)"></i>' + esc(T.more) + "</span></div>";
+    return '<div class="heat" data-weeks="' + weeks + '">' + heatCells(weeks) + '</div><div class="legend"><span>🔥 ' + num(streak) + " " + esc(streak === 1 ? T.streak1 : T.streak) + '</span><span class="sp"></span><span class="scale">' + esc(T.less) + ' <i style="background:var(--heat-0)"></i><i style="background:rgba(124,92,255,.3)"></i><i style="background:rgba(124,92,255,.55)"></i><i style="background:rgba(124,92,255,.8)"></i><i style="background:var(--accent)"></i>' + esc(T.more) + "</span></div>";
+  }
+  function fitHeat() {
+    Array.prototype.forEach.call(document.querySelectorAll(".heat"), function (el) {
+      var w = el.clientWidth; if (!w) return;
+      var weeks = Math.max(8, Math.min(104, Math.floor((w + 4) / 17)));
+      if (String(weeks) === el.getAttribute("data-weeks")) return;
+      el.setAttribute("data-weeks", weeks);
+      el.innerHTML = heatCells(weeks);
+    });
   }
   function examCard(a, e) {
     var n = diff(e.date), past = n < 0, src = e.source ? (/^plan/.test(e.source) ? T.fromPlan : shortPath(e.source, 2)) : "";
@@ -349,7 +364,7 @@
     var tot = D.totals || {}, rows = AREAS.filter(function (a) { return (a.articles || []).length; }).sort(function (p, q) { return (p.archived ? 1 : 0) - (q.archived ? 1 : 0) || q.articles.length - p.articles.length; });
     var mx = Math.max.apply(null, rows.map(function (a) { return a.articles.length; }).concat([1]));
     var t = '<div class="scroll"><table><thead><tr><th>' + esc(T.area) + '</th><th class="n">' + esc(T.articles) + "</th><th></th></tr></thead><tbody>" + rows.map(function (a) { return '<tr><td><a class="link" href="#/uc/' + esc(a.slug) + '">' + esc(a.name) + '</a></td><td class="n">' + num(a.articles.length) + '</td><td class="bc">' + bar([{ c: "seg-a", v: a.articles.length, l: T.articles }], mx) + "</td></tr>"; }).join("") + "</tbody></table></div>";
-    var hl = !tot.broken_links && !tot.not_in_index ? '<span class="tag st-good">✓ ' + esc(T.allGood) + "</span>" : "";
+    var healthy = !tot.broken_links && !tot.not_in_index, hl = healthy ? '<div class="allok"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M14 27 l8 8 l16 -18"/></svg><b>' + esc(T.allGood) + "</b></div>" : "";
     if (tot.broken_links) hl += "<h4>" + esc(T.broken) + " · " + num(tot.broken_links) + '</h4><ul class="list">' + (D.broken || []).map(function (b) { return '<li><span class="g">[[' + esc(b.target) + ']]</span><span class="small muted">' + esc((b["in"] || []).join(", ")) + "</span></li>"; }).join("") + "</ul>";
     if (tot.not_in_index) hl += "<h4>" + esc(T.notInIndex) + " · " + num(tot.not_in_index) + '</h4><ul class="list">' + (D.not_in_index || []).map(function (n) { return '<li><span class="g">' + esc(n) + "</span></li>"; }).join("") + "</ul>";
     if ((D.notes || []).length) hl += "<h4>" + esc(T.inbox) + '</h4><ul class="list">' + D.notes.map(function (n) { return '<li><span class="g">' + esc(n.path) + '</span><span class="small muted">' + esc(rel(n.mtime)) + "</span></li>"; }).join("") + "</ul>";
@@ -451,6 +466,7 @@
     var a = AREAS.filter(function (x) { return route === "#/uc/" + x.slug; })[0];
     document.title = (a ? a.name + " — " : "") + (D.kb.name || D.kb.folder) + " · Dashboard";
     paintTheme();
+    fitHeat();
     var of = document.getElementById("ofilter");
     if (of) { of.addEventListener("input", function () { outFilter.q = of.value; var pos = of.selectionStart; render(); var n = document.getElementById("ofilter"); n.focus(); n.setSelectionRange(pos, pos); }); }
   }
@@ -623,6 +639,7 @@
     tip.style.left = Math.min(e.clientX + 12, window.innerWidth - tip.offsetWidth - 8) + "px";
     tip.style.top = (e.clientY + 14) + "px"; tip.style.opacity = 1;
   });
+  window.addEventListener("resize", function () { clearTimeout(fitHeat._t); fitHeat._t = setTimeout(fitHeat, 80); });
   window.addEventListener("hashchange", function () { render(); window.scrollTo(0, 0); });
   window.addEventListener("focus", function () { if (live.state === "on") count(); else render(); });
 

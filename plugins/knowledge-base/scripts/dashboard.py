@@ -311,6 +311,28 @@ def sources_manifest(kb: Path, raw_files: dict):
                 else:
                     pieces = [clean_cell(x) for x in re.split(r",\s+|<br\s*/?>|;\s+", c)]
                     hits = [x for x in pieces if x and key(x) in raw_files]
+                    if hits:
+                        # Later pieces may be bare names or globs relative to the
+                        # first file's folder (a row shared by sibling files).
+                        base = hits[0].rsplit("/", 1)[0] + "/" if "/" in hits[0] else ""
+                        kbase, seen = key(base), {key(h) for h in hits}
+                        for x in pieces:
+                            if not x or key(x) in seen:
+                                continue
+                            if key(base + x) in raw_files:
+                                hits.append(base + x)
+                                seen.add(key(base + x))
+                            elif "*" in x:
+                                # A glob only reaches inside the first file's folder,
+                                # and a bare "*.pdf" stays at that level (fnmatch's "*"
+                                # would otherwise cross every "/").
+                                for k, f in raw_files.items():
+                                    if k in seen or not k.startswith(kbase + "/" if kbase else "") or not matches(f["path"], [base + x]):
+                                        continue
+                                    if "/" not in x and "/" in k[len(kbase) + 1 if kbase else 0:]:
+                                        continue
+                                    hits.append(f["path"])
+                                    seen.add(k)
                 if len(hits) > len(best):
                     best = hits
                 elif (not best and i == 0 and "/" in whole and "*" not in whole
