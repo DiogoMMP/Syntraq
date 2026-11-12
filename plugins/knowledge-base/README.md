@@ -85,7 +85,7 @@ Health check da `wiki/`: links partidos, artigos órfãos (não referenciados no
 Monta o dashboard de uma KB em modo research: um `dashboard.html` na raiz que abre com duplo clique, offline, com as cores e o logo do Syntraq e menus. Tem estas páginas:
 
 - **Visão geral**: os próximos exames, próximos passos com um botão para copiar o pedido para o Claude, as tarefas de hoje, um mapa de calor do ritmo de estudo e o que falta;
-- **Uma página por UC**: contagem decrescente, prioridades com links para o Obsidian, notas estimadas com tendência e nota mínima, o plano, o material, as fontes e a wiki da UC;
+- **Uma página por UC**: contagem decrescente, prioridades com links para o Obsidian, notas estimadas com tendência e nota de aprovação, o plano, o material, as fontes e a wiki da UC;
 - **Fontes, Wiki, Outputs e Atividade**.
 
 Tudo o resto vive em `.dashboard/`, uma pasta que o Obsidian ignora:
@@ -95,7 +95,7 @@ Tudo o resto vive em `.dashboard/`, uma pasta que o Obsidian ignora:
 - `data/activity/` tem um ficheiro por evento, que cada skill regista com `python .dashboard/dashboard.py event …`;
 - `data.js` é o snapshot que a página lê, refeito a cada evento.
 
-Assim o dashboard mantém-se atualizado sozinho. Este skill só volta a ser preciso na primeira vez, depois de uma atualização do plugin ou quando aparecem pastas ou UCs novas. Decide tudo sem fazer perguntas. O que não encontra (uma data de exame, a nota mínima) aparece como cartão "em falta", com o pedido pronto a copiar.
+Assim o dashboard mantém-se atualizado sozinho. Este skill só volta a ser preciso na primeira vez, depois de uma atualização do plugin ou quando aparecem pastas ou UCs novas. Decide tudo sem fazer perguntas. O que não encontra (uma data de exame) aparece como cartão "em falta", com o pedido pronto a copiar.
 
 No Chrome ou no Edge, o botão "Ligar à pasta da KB" põe a página a contar o `raw/` ao vivo e a guardar o tema no ficheiro. Se o `raw/` for uma junction, a página pede para ligar também a pasta real dele.
 

@@ -78,16 +78,15 @@ Everything else updates itself. If the user asks to "update the dashboard" and n
    - **`course.json`**: write the exam dates and the pass mark.
      - **Exam dates**: a study plan's `exams:` frontmatter is read by the builder when the plan is listed in `plans`, matched by name or alias. Otherwise search the KB (the exams article, the course's notes, a calendar or course outline in `raw/`) and write `exams: [{"label", "date", "time", "source"}]`, leaving out `time` when it isn't known.
      - **Dates without a year, and which year a document is from**, follow the study plugin's `references/dashboard.md` ("Exam dates").
-     - **`pass_grade`**, `pass_rules` and `grade_scale` follow that reference too ("Pass mark"). It isn't always 9.5, and a minimum on one component is not the course's pass mark.
+     - **`pass_grade`**, `pass_rules` and `grade_scale` follow that reference too ("Pass mark"). The pass mark is 9.5 on a 0-20 scale (the page assumes it), so set `pass_grade` only when the rules state another final mark; a minimum on one component, such as the exam, can differ and goes in `pass_rules`.
      - When a date or pass mark can't be found, write nothing. The page shows a missing card with a request the user can copy (e.g. "a data do exame de X é …").
    - To read PDFs in `raw/`, use Python (`pymupdf`/`fitz` or `pypdf`, whichever is installed) with `PYTHONIOENCODING=utf-8` set (the Windows console can't print accented text otherwise), and find files with a glob from Python. Names on disk may be Unicode-decomposed, so a path typed into Read can fail even though the file exists.
 
 8. **Plans and extras.**
    - `plans`: list the study plans from the scan whose last day is no more than 14 days before today as `{"path": "outputs/…/plan.md", "label": "<its title>"}`. Team or project plans that aren't for studying stay out. `study-plan` adds new ones itself from now on.
    - `extra`: generic panels for something the KB has that the pages don't cover (a dataset, a reading list, a project with deliverables). Kinds: `{"title", "kind": "stat", "value", "sub"}`, `{"title", "kind": "progress", "value", "total"}`, `{"title", "kind": "list", "items": [...]}`, `{"title", "kind": "table", "columns": [...], "rows": [[...]]}`, each with an optional `note` (give hand-written numbers a dated note). Never add a panel just to fill space.
-   - `missing.json` (a list of `{"area", "kind", "what", "how", "prompt"}`) is for gaps the page can't detect by itself. The page already adds two kinds on its own, and skips them when `missing.json` has one of the same `kind` for that area:
-     - `exam-date`: a current (not archived) course with no upcoming exam date;
-     - `pass-grade`: a course with grades or an upcoming exam but no pass mark.
+   - `missing.json` (a list of `{"area", "kind", "what", "how", "prompt"}`) is for gaps the page can't detect by itself. The page already adds one kind on its own, and skips it when `missing.json` has one of the same `kind` for that area:
+     - `exam-date`: a current (not archived) course with no upcoming exam date.
 
 9. **Write `settings.json`** (format below), then build: `python .dashboard/dashboard.py event dashboard "<one line: what was set up or changed>"`, run from the KB root. That logs the run and builds `data.js`.
 
