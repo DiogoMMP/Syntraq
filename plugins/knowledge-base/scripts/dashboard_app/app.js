@@ -20,7 +20,7 @@
     newF: "novas", changed: "alteradas", lastCompile: "última compilação",
     upcoming: "Próximos exames", nextSteps: "Próximos passos", copy: "Copiar pedido", copied: "Copiado — cola no Claude", todayTasks: "Hoje", nextDay: "Próximo dia de estudo",
     missing: "Em falta", heat: "Ritmo", streak: "dias seguidos", streak1: "dia seguido", less: "menos", more: "mais", nothing: "Nada para mostrar.",
-    priorities: "Prioridades", grades: "Notas estimadas", trend: "tendência", perAttempt: "por tentativa", nextGuess: "próxima ≈", passGrade: "nota mínima", noPass: "Nota mínima por definir",
+    priorities: "Prioridades", grades: "Notas estimadas", trend: "tendência", perAttempt: "por tentativa", nextGuess: "próxima ≈", passGrade: "nota de aprovação", rules: "Regras",
     above: "acima da mínima", partial: "parcial, convertida", below: "abaixo da mínima", attempts: "tentativas", quizzes: "quizzes", material: "Material", plan: "Plano", tasks: "tarefas",
     ahead: "Adiantado", onTrack: "Em dia", behind: "Atrasado", overdue: "por fazer de dias anteriores", planOver: "Plano terminado", notDone: "por fazer",
     compiled: "Compiladas", pending: "Pendentes", newer: "alterada desde a compilação", area: "Área", total: "Total", pendingList: "Por compilar (mais recentes)",
@@ -49,7 +49,7 @@
     newF: "new", changed: "changed", lastCompile: "last compile",
     upcoming: "Upcoming exams", nextSteps: "Next steps", copy: "Copy request", copied: "Copied — paste it to Claude", todayTasks: "Today", nextDay: "Next study day",
     missing: "Missing", heat: "Rhythm", streak: "day streak", streak1: "day streak", less: "less", more: "more", nothing: "Nothing to show.",
-    priorities: "Priorities", grades: "Estimated grades", trend: "trend", perAttempt: "per attempt", nextGuess: "next ≈", passGrade: "pass mark", noPass: "Pass mark not set",
+    priorities: "Priorities", grades: "Estimated grades", trend: "trend", perAttempt: "per attempt", nextGuess: "next ≈", passGrade: "pass mark", rules: "Rules",
     above: "above the pass mark", partial: "partial, rescaled", below: "below the pass mark", attempts: "attempts", quizzes: "quizzes", material: "Material", plan: "Plan", tasks: "tasks",
     ahead: "Ahead", onTrack: "On track", behind: "Behind", overdue: "left from earlier days", planOver: "Plan over", notDone: "not done",
     compiled: "Compiled", pending: "Pending", newer: "changed since compiled", area: "Area", total: "Total", pendingList: "To compile (newest)",
@@ -227,8 +227,6 @@
       var upcoming = examsOf(a).some(function (e) { return diff(e.date) >= 0; });
       if (!upcoming && isStudyKB() && (hasStudy(a) || a.sources.total) && !has(a, "exam-date"))
         out.push({ area: a.name, kind: "exam-date", what: (PT ? "Data do exame — " : "Exam date — ") + a.name, how: PT ? "Corre o study-plan ou diz a data ao Claude." : "Run study-plan or tell Claude the date.", prompt: PT ? "a data do exame de " + a.name + " é …" : "the exam date of " + a.name + " is …" });
-      if (((a.attempts || []).length || upcoming) && a.course.pass_grade == null && !has(a, "pass-grade"))
-        out.push({ area: a.name, kind: "pass-grade", what: T.noPass + " — " + a.name, how: PT ? "Nem sempre é 9,5: diz ao Claude qual é, ou onde está a regra (ficha da UC)." : "Tell Claude the pass mark, or where the rule is.", prompt: PT ? "a nota mínima de " + a.name + " é …" : "the pass mark of " + a.name + " is …" });
     });
     return out;
   }
@@ -334,9 +332,11 @@
       var t = tps.map(function (t) { var ar = (a.articles || []).filter(function (x) { return key(x.name) === key(t.article || t.name); })[0]; return '<div class="topic"><span class="nm">' + (ar ? artLink({ path: ar.path, name: t.name }) : esc(t.name)) + '</span><span class="small muted">' + esc(t.band || "") + (t.share ? " " + num(t.share) + "%" : "") + "</span>" + stTag(t.state, t.note) + "</div>"; });
       cards += card(esc(T.priorities), t.slice(0, 10).join("") + (t.length > 10 ? "<details><summary>+" + (t.length - 10) + "</summary>" + t.slice(10).join("") + "</details>" : ""));
     }
-    var passInfo = a.course.pass_rules ? '<p class="small muted" style="margin:6px 0 0">' + esc(T.passGrade) + ": " + esc(a.course.pass_rules) + "</p>"
-      : (a.course.pass_grade != null && !(a.attempts || []).length ? '<p class="small muted" style="margin:6px 0 0">' + esc(T.passGrade) + ": " + grade(a.course.pass_grade) + "</p>" : "");
-    if ((a.attempts || []).length) cards += card(esc(T.grades) + ' <span class="muted small">' + num(a.attempts.length) + " " + esc(T.attempts) + (a.quizzes ? " · " + num(a.quizzes) + " " + esc(T.quizzes) : "") + "</span>", spark(a.attempts, scale, a.course.pass_grade) + passInfo);
+    // The course's pass mark is 9.5 on a 0-20 scale unless its rules say otherwise; the minimum for the exam alone can differ and lives in pass_rules.
+    var pass = a.course.pass_grade != null ? a.course.pass_grade : (scale === 20 ? 9.5 : null);
+    var passInfo = (pass != null && !(a.attempts || []).length ? '<p class="small muted" style="margin:6px 0 0">' + esc(T.passGrade) + ": " + grade(pass) + "</p>" : "") +
+      (a.course.pass_rules ? '<p class="small muted" style="margin:6px 0 0">' + esc(T.rules) + ": " + esc(a.course.pass_rules) + "</p>" : "");
+    if ((a.attempts || []).length) cards += card(esc(T.grades) + ' <span class="muted small">' + num(a.attempts.length) + " " + esc(T.attempts) + (a.quizzes ? " · " + num(a.quizzes) + " " + esc(T.quizzes) : "") + "</span>", spark(a.attempts, scale, pass) + passInfo);
     else if (passInfo) cards += card(esc(T.grades), passInfo);
     pl.forEach(function (p) { cards += card(esc(p.label), planBlock(p)); });
     if ((a.materials || []).length) cards += card(esc(T.material), '<ul class="list">' + a.materials.map(function (m) { return '<li><span class="kind k-output">' + esc(m.type) + '</span><span class="g"><a class="link" href="' + esc(href(m.path)) + '">' + esc(m.title) + "</a></span>" + '<span class="small muted">' + (m.version ? "v" + esc(m.version) + " · " : "") + esc(m.updated ? rel(m.updated) : "") + "</span></li>"; }).join("") + "</ul>");
