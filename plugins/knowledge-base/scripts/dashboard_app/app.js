@@ -432,6 +432,7 @@
       "<nav>" + a("#/", "◇ " + esc(T.overview)) +
       (act.length ? '<div class="grp">' + esc(isStudyKB() ? T.courses : T.areas) + "</div>" + act.map(ucLink).join("") : "") +
       (arch.length ? '<details' + (arch.some(function (x) { return route === "#/uc/" + x.slug; }) ? " open" : "") + '><summary><div class="grp">▸ ' + esc(T.archive) + " · " + arch.length + "</div></summary>" + arch.map(ucLink).join("") + "</details>" : "") +
+      (arch.length ? '<div class="arch-compact">' + arch.map(ucLink).join("") + "</div>" : "") +
       '<div class="grp">KB</div>' + a("#/sources", "⬇ " + esc(T.sources), num((tot.pending || 0) + (tot.changed || 0)) || "") + a("#/wiki", "❖ " + esc(T.wiki), num(tot.articles)) + a("#/outputs", "▤ " + esc(T.outputs), num(tot.outputs)) + a("#/activity", "∿ " + esc(T.activity)) + "</nav>" +
       '<div class="foot">' + liveControl(false) + '<div class="row"><button class="btn sm" id="theme"></button><span class="sp"></span><span title="' + esc(gen) + '">' + esc(T.generated) + " " + esc(rel(gen.slice(0, 10))) + " " + esc(gen.slice(11, 16)) + "</span></div>" +
       (age >= 7 ? '<span class="stale">' + esc(T.stale) + "</span>" : "") + '<span>' + esc(T.footer) + "</span></div></aside>";
@@ -554,7 +555,8 @@
       // an excluded folder: its files count as out of scope, without reading their dates
       var subs = [];
       for await (var entry of dir.entries()) {
-        if (entry[0].charAt(0) === ".") continue;
+        var nm = entry[0];
+        if (nm.charAt(0) === "." || nm.indexOf("~$") === 0 || /^(desktop\.ini|thumbs\.db)$/i.test(nm)) continue;
         if (entry[1].kind === "directory") subs.push(countOnly(entry[1])); else skipped++;
       }
       await Promise.all(subs);
@@ -622,7 +624,7 @@
     tip.style.top = (e.clientY + 14) + "px"; tip.style.opacity = 1;
   });
   window.addEventListener("hashchange", function () { render(); window.scrollTo(0, 0); });
-  window.addEventListener("focus", function () { if (live.state === "on") count(); });
+  window.addEventListener("focus", function () { if (live.state === "on") count(); else render(); });
 
   render();
   liveInit();

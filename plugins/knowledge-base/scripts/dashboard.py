@@ -105,23 +105,30 @@ def up_to_date(mtime_min: str, compiled: str) -> bool:
 def walk(root: Path):
     """Every file under root, following junctions/symlinks (raw/ is often one).
 
-    A link that leads back to a folder already visited (a cycle) is skipped.
+    Only a link back to one of the folders above it on the current path (a
+    real cycle) is skipped; two paths reaching the same folder both count.
     """
     if not root.exists():
         return
-    seen = set()
-    for dirpath, dirnames, filenames in os.walk(root, followlinks=True):
-        real = os.path.realpath(dirpath)
-        if real in seen:
-            dirnames[:] = []
-            continue
-        seen.add(real)
-        dirnames[:] = sorted(d for d in dirnames if not d.startswith(".")
-                             and os.path.realpath(os.path.join(dirpath, d)) not in seen)
-        for f in sorted(filenames):
-            if f.startswith(".") or f.startswith("~$") or f.lower() in ALWAYS_SKIP:
+
+    def visit(folder: str, ancestors: frozenset):
+        real = os.path.realpath(folder)
+        if real in ancestors:
+            return
+        chain = ancestors | {real}
+        try:
+            entries = sorted(os.scandir(folder), key=lambda e: e.name)
+        except OSError:
+            return
+        for e in entries:
+            if e.name.startswith("."):
                 continue
-            yield Path(dirpath) / f
+            if e.is_dir(follow_symlinks=True):
+                yield from visit(e.path, chain)
+            elif not (e.name.startswith("~$") or e.name.lower() in ALWAYS_SKIP):
+                yield Path(e.path)
+
+    yield from visit(str(root), frozenset())
 
 
 def read(p: Path) -> str:
@@ -773,9 +780,21 @@ def cmd_event(kb: Path, args: list) -> Path:
             sys.exit(f"unknown option {flag}")
         i += 2
     # A random suffix keeps two events of the same skill in the same second apart.
-    target = kb / DASH / "data" / "activity" / f"{now.strftime('%Y-%m-%dT%H-%M-%S')}-{slug(skill)}-{uuid.uuid4().hex[:6]}.json"
-    write_json(target, e)
-    return target
+    folder = kb / DASH / "data" / "activity"
+    folder.mkdir(parents=True, exist_ok=True)
+    tmp = folder / f".event.{os.getpid()}.{uuid.uuid4().hex}.tmp"
+    tmp.write_text(json.dumps(e, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    try:
+        for _ in range(20):
+            target = folder / f"{now.strftime('%Y-%m-%dT%H-%M-%S')}-{slug(skill)}-{uuid.uuid4().hex[:6]}.json"
+            try:
+                os.link(tmp, target)  # atomic, and fails if the name is taken: never overwrites
+                return target
+            except FileExistsError:
+                continue
+        sys.exit("could not find a free event file name")
+    finally:
+        tmp.unlink(missing_ok=True)
 
 
 # ---------------------------------------------------------------- main
