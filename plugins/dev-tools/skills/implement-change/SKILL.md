@@ -23,7 +23,9 @@ Both documents live in the **same folder**. The same process — plan gate, READ
 
 Each type keeps its **own independent numbering** (`F0001`, `F0002`, … / `B0001`, `B0002`, … / `H0001`, `H0002`, …) and its own index file, so the three families never collide.
 
-**Why `docs/changes/` and not `docs/` directly:** a project's `docs/` folder may also host a personal knowledge-base vault (`wiki/`, `notes/`, `.obsidian/` — see the `knowledge-base` skill). Nesting all per-change records under `docs/changes/` keeps them out of that vault's file tree and graph instead of mixing per-PR paperwork into synthesized, always-current knowledge. If a project's `docs/` has no such vault, `docs/changes/` is still the right place — consistency across projects beats a shorter path in the ones without a KB.
+**Existing records win.** `docs/changes/<type>/` is the default for a repo that keeps none yet. If the repo already keeps the same records elsewhere — `docs/features/`, `docs/bugfixes/`, `docs/hotfixes/`, or whatever its `AGENTS.md`/`CLAUDE.md`/docs index names — **discover that and use it**, with the same numbering and structure, and never open a parallel `docs/changes/` beside it. If records of several layouts coexist, or this type has none but a sibling type does, ask once with `AskUserQuestion`, recommending the layout that holds the newest record. Everywhere below, read `docs/changes/<type>/` as "wherever this repo keeps that type's records". The same goes for the branch and the issue reference: use the repo's real patterns (`feature/ABC-123`, `feature/12-dark-mode`, none at all) from `git branch -a`, `git log` and its conventions file; never impose one.
+
+**Why `docs/changes/` and not `docs/` directly (for a repo with no records yet):** a project's `docs/` folder may also host a personal knowledge-base vault (`wiki/`, `notes/`, `.obsidian/` — see the `knowledge-base` skill). Nesting all per-change records under `docs/changes/` keeps them out of that vault's file tree and graph instead of mixing per-PR paperwork into synthesized, always-current knowledge. If a project's `docs/` has no such vault, `docs/changes/` is still the right place — consistency across projects beats a shorter path in the ones without a KB.
 
 **Stack-agnostic by design.** This file describes the *process*. Every technical rule — layering, naming, migrations, test layout, commit style — comes from **the project you are in**, discovered in Phase 0.5. Never apply a convention from another project, and never assume a language or framework: read the repo.
 
@@ -79,11 +81,11 @@ Everything technical comes from here. Read, in this order:
    git branch --show-current
    cat README.md 2>/dev/null | head -60
    ls docs/ 2>/dev/null
-   ls docs/changes/ 2>/dev/null
+   ls docs/changes/ 2>/dev/null   # or wherever the repo keeps its change records (see "Existing records win")
    ```
 
 3. **The stack and its gate** — from the manifest, not from a guess: `package.json` scripts, `Makefile` targets, `pyproject.toml`, `*.csproj`/`*.sln`, `Cargo.toml`, `go.mod`, the CI workflow in `.github/workflows/`. Note the exact build / test / lint / typecheck commands; you will run them in Phase 4 and cite them in the record.
-4. **The existing records for this change type** — `ls docs/changes/<type>/` and read the newest one. It tells you the section structure, the language, the numbering and the index this project expects. If a sibling type has records but this one doesn't, use the sibling's structure as the closest precedent rather than inventing one from scratch.
+4. **The existing records for this change type** — list the folder where the repo keeps that type's records (per "Existing records win"; `docs/changes/<type>/` only if it keeps none) and read the newest one. It tells you the section structure, the language, the numbering and the index this project expects. If a sibling type has records but this one doesn't, use the sibling's structure as the closest precedent rather than inventing one from scratch.
 
 **When the conventions file and the disk disagree** — it declares a layout, a folder or a tool that is not there — **stop and report; do not pick a side.** Say which is which and let a person decide. A conventions file that describes a project it no longer matches steers every later change wrong.
 
@@ -109,7 +111,7 @@ Map the request onto the codebase before writing a line of the plan. Read the re
 
 - **`<PREFIX><NNNN>`** — the next free number **for this change type**. If the project keeps an index (`docs/changes/<type>/README.md`), read it and take the next one; otherwise take the next after the highest existing folder under `docs/changes/<type>/`. Four digits, sequential, **never reused**, not even for an abandoned change. Feature, bugfix and hotfix numbering never share a counter.
 - **`<slug>`** — 3–6 kebab-case words naming the change, matching the branch slug.
-- If `docs/changes/<type>/` does not exist yet, create it and say so — this is record number one for that type. If `docs/changes/` itself doesn't exist yet either, create that too.
+- Only when the repo keeps no records of this type anywhere (not under `docs/changes/`, not under `docs/features/` and the like): if `docs/changes/<type>/` does not exist yet, create it and say so — this is record number one for that type. If `docs/changes/` itself doesn't exist yet either, create that too.
 
 ---
 
@@ -158,7 +160,7 @@ Delete sections that genuinely do not apply — an empty section kept is noise. 
 
 1. The path of the approved spec, `docs/changes/<type>/<PREFIX><NNNN>-<slug>/README.md`, and the instruction to read it in full first, then the project's conventions file (`CLAUDE.md` / `AGENTS.md` / `CONTRIBUTING.md`) — which outranks the rules below on every technical question.
 2. The working directory and branch it must be on (it checks `git branch --show-current`; wrong branch → it stops and reports, never creates one).
-3. **The text of this skill from the line "Implement **the phases of §3, in order**" through the end of Phase 5, verbatim** — and **not** the paragraphs above it (the "You do not implement… launch one agent" instructions are addressed to you, not to the delegate, and would make it refuse or delegate again). It includes the `RESULT.md` structure and the index update. Add one line: *you were given only this spec; if it is ambiguous or contradicts the code, stop and report what is unclear instead of guessing.*
+3. **The text of this skill from the line "Implement **the phases of §3, in order**" through the end of Phase 5, verbatim** — and **not** the paragraphs above it (the "You do not implement… launch one agent" instructions are addressed to you, not to the delegate, and would make it refuse or delegate again). It includes the `RESULT.md` structure and the index update. Add two lines: *you were given only this spec; if it is ambiguous or contradicts the code, stop and report what is unclear instead of guessing*, and *wherever the text says `docs/changes/<type>/`, it means the folder that holds the approved spec: write `RESULT.md` beside it and the index row in that folder's index, never in a new `docs/changes/` tree*.
 4. The prohibitions: no commit, no push, no PR, no edits to the README, no code changes outside §3's scope. The scope limit does **not** cover the records this skill requires: `RESULT.md` beside the README, the type's index row and, when applicable, the defect-ledger entry and the conventions file (Phase 5) — those are required, not out of scope.
 5. Before launching, record two baselines for your own Phase 6 check: a hash of the approved README (`git hash-object <README>`) and the working-tree state (`git status --short --untracked-files=all`).
 
