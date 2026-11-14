@@ -1,0 +1,9 @@
+{
+  "name": "project-docs",
+  "description": "Technical documentation for a code repository, built from the code and kept true: generate the documentation tree (docs-tree), update only what a change touched (update-docs) and record architecture decisions (create-adr).",
+  "version": "1.0.0",
+  "author": {
+    "name": "Diogo Pereira",
+    "email": "diogopereira812@gmail.com"
+  }
+}

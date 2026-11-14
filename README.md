@@ -5,9 +5,9 @@
 
 # Syntraq
 
-![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin%20marketplace-D97757?logo=anthropic&logoColor=white) ![Plugins](https://img.shields.io/badge/plugins-5-7C5CFF) ![Skills](https://img.shields.io/badge/skills-32-22D3EE) ![Commits](https://img.shields.io/badge/commits-Conventional-FE5196?logo=conventionalcommits&logoColor=white) ![License](https://img.shields.io/badge/license-MIT-blue)
+![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin%20marketplace-D97757?logo=anthropic&logoColor=white) ![Plugins](https://img.shields.io/badge/plugins-6-7C5CFF) ![Skills](https://img.shields.io/badge/skills-35-22D3EE) ![Commits](https://img.shields.io/badge/commits-Conventional-FE5196?logo=conventionalcommits&logoColor=white) ![License](https://img.shields.io/badge/license-MIT-blue)
 
-Marketplace de plugins para o [Claude Code](https://code.claude.com): skills que levam o agente do pedido à entrega — commits e pull requests com aprovação em cada passo, mudanças implementadas com registo escrito, knowledge bases mantidas por LLM, estudo para exames a partir dessa knowledge base e relatórios académicos começados a partir do teu template e depois escritos e revistos só com sugestões.
+Marketplace de plugins para o [Claude Code](https://code.claude.com): skills que levam o agente do pedido à entrega — commits e pull requests com aprovação em cada passo, mudanças implementadas com registo escrito, documentação técnica gerada a partir do código e mantida em dia, knowledge bases mantidas por LLM, estudo para exames a partir dessa knowledge base e relatórios académicos começados a partir do teu template e depois escritos e revistos só com sugestões.
 
 Cada plugin instala-se à parte e tem o seu próprio README com a descrição completa de cada skill.
 
@@ -32,6 +32,7 @@ Adiciona o marketplace uma vez e instala só os plugins que queres:
 /plugin marketplace add DiogoMMP/syntraq
 /plugin install git-workflow@syntraq
 /plugin install dev-tools@syntraq
+/plugin install project-docs@syntraq
 /plugin install knowledge-base@syntraq
 /plugin install study@syntraq
 /plugin install reports@syntraq
@@ -65,6 +66,14 @@ claude --plugin-dir ./plugins/dev-tools
 | `create-agents-md` | Escreve ou atualiza o `AGENTS.md` do repositório, em conjunto contigo |
 | `clean-architecture` | Cria (ou reorganiza) um projeto em Clean Architecture |
 | `write-tests` | Escreve testes unitários e/ou de integração, em qualquer stack |
+
+### [`project-docs`](plugins/project-docs/README.md) — Documentação técnica
+
+| Skill | O que faz |
+| :--- | :--- |
+| `docs-tree` | Gera a árvore de documentação técnica a partir do código: arquitetura, spec técnica, desenvolvimento, operações |
+| `update-docs` | Põe a documentação em dia com uma alteração, tocando só nas secções que o diff afeta |
+| `create-adr` | Regista uma decisão de arquitetura (ADR) na pasta de ADRs do repositório |
 
 ### [`knowledge-base`](plugins/knowledge-base/README.md) — Knowledge base pessoal
 
