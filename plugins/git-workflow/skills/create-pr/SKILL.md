@@ -18,7 +18,7 @@ allowed-tools: ["Bash", "AskUserQuestion", "Read", "Grep", "Glob", "Skill", "Age
 
 - **Language — Portuguese by default.** Every word you write into the PR body goes in Portuguese, whatever the language of the chat, of the commits, or of the code — unless the template found in Step 3 is itself fixed prose in another language, in which case follow the template's language instead. No mixed-language bodies, no English summary under Portuguese headings. See Step 4.
 - **No hard wraps in the body.** One paragraph or list item per line, however long — GitHub wraps it; manual breaks at 80/100 columns show up as broken sentences. Line breaks only between blocks.
-- **Always link the `docs/changes/` records.** Any feature / bugfix / hotfix / fix Markdown record this branch adds or touches must be linked from the PR body. See Step 4.
+- **Always link the work records, when the repo keeps them.** Any feature / bugfix / hotfix / fix Markdown record this branch adds or touches (`docs/changes/`, or wherever the repo keeps them) must be linked from the PR body. See Step 4.
 - **Issues follow the target branch.** A PR into the default branch (`main`) *closes* its issues; a PR into `develop` only marks them with a `Testing: #N` line for the repo's automation to read on merge. The skill itself never moves an issue. See Step 4.
 
 ---
@@ -120,7 +120,7 @@ Then `cat` it and treat its content as the **skeleton you must fill in**:
 
 ## Step 4 — Compose the title and body
 
-**Title** — Conventional Commits shape: `fix(auth): reject forged logout navigations`. Check whether this change has an associated issue or ticket — derived from the branch name (e.g. `feature/12-dark-mode` → `#12`, `feature/ABC-123` → `ABC-123`) or mentioned anywhere in the conversation. **If one exists, it must be referenced** — in the title (`(#12)`, `(ABC-123)`) or, failing that, in the body; don't drop a known one silently. If the repo's own rules or history put the key in a fixed place in the title (`ABC-123: …`, `[ABC-123] …`), follow that. Only the *absence* of one is fine to leave as-is: never ask the user to open an issue just to have something to reference. If the template's own checklist names a title pattern (e.g. `[tipo]: descrição curta`), follow **that** pattern instead. Imperative mood, no trailing period, ≤ 72 chars.
+**Title** — follow the repo's own title style (the template's pattern wins, then the style of its commits and merged PR titles as found by `commit-push` Step 1b); Conventional Commits shape only as the fallback: `fix(auth): reject forged logout navigations`. Check whether this change has an associated issue or ticket — derived from the branch name (e.g. `feature/12-dark-mode` → `#12`, `feature/ABC-123` → `ABC-123`) or mentioned anywhere in the conversation. **If one exists, it must be referenced** — in the title (`(#12)`, `(ABC-123)`) or, failing that, in the body; don't drop a known one silently. If the repo's own rules or history put the key in a fixed place in the title (`ABC-123: …`, `[ABC-123] …`), follow that. Only the *absence* of one is fine to leave as-is: never ask the user to open an issue just to have something to reference. If the template's own checklist names a title pattern (e.g. `[tipo]: descrição curta`), follow **that** pattern instead. Imperative mood, no trailing period, ≤ 72 chars.
 
 **Body language — Portuguese by default.** Write every word you add in Portuguese (pt-PT), regardless of the language of the chat, of the commit messages, or of the code — that's the default for this user's personal projects. **Exception:** if the template you found in Step 3 is itself clearly written in another language (fixed headings and prose, not just placeholders), follow the template's own language instead so the body doesn't mix languages with its fixed text. Never produce a mixed-language body (an English *Summary* under `## 📋 Descrição` is wrong).
 
@@ -137,7 +137,7 @@ If the user explicitly asks for a PR body in another language for a given PR, th
 
 **Body content** — describe intent, not a file listing. Say *why* the change exists, what a reviewer should look at, and anything non-obvious (trade-offs, follow-ups deliberately left out, migration or deploy steps). Never claim a test ran that you did not run.
 
-### Link the `docs/changes/` records — always
+### Link the work records — when the repo keeps them
 
 Projects that keep written records of their work usually do it as Markdown under `docs/changes/` (kept separate from any `docs/wiki/` or `docs/notes/` personal knowledge base — see `implement-change`), but some keep the same families directly under `docs/` (`docs/features/`, `docs/bugfixes/`, `docs/hotfixes/`, `docs/fixes/`). **Discover which one this repo uses** (`ls docs/`, its docs index, `AGENTS.md`/`CLAUDE.md`) and use that; the paths in the table and the commands below are written for `docs/changes/` — substitute the repo's own prefix. If the repo keeps no such records, skip this part and say nothing about them in the body. Every such record the branch **adds or modifies** must be linked from the PR body, so a reviewer reaches the reasoning in one click:
 
@@ -167,7 +167,7 @@ Rules:
 - **Where:** the template's additional-information section (`## 📎 Informações adicionais` here), or wherever the repo's own template puts supplementary links — in this skill's default template, `## 🔗 Issues relacionadas`. If the template has no such section, put the list at the end of the description section — never invent a new heading for it (Step 3).
 - **Link text in the body's language**, and descriptive: the record id plus what it is, not a bare filename.
 - **Only records that exist.** Link exactly what the diff shows; never guess an id, a slug or a date in a filename. Verify each path resolves on disk before writing the link (SC-7 never-invent).
-- **When the branch touches no `docs/changes/` record**, say so in that section in the body's language (e.g. "Sem registos em `docs/changes/` associados a este PR.") — never leave it blank, never fabricate a link to make it look complete. If the change is a defect fix and there is *no* `docs/changes/fixes/` entry, mention it in chat: the repo's convention expects one.
+- **When the repo keeps such records but the branch touches none**, say so in that section in the body's language (e.g. "Sem registos em `docs/changes/` associados a este PR.", with the repo's own records prefix) — never leave it blank, never fabricate a link to make it look complete. If the change is a defect fix and the repo keeps a fixes ledger with *no* entry for it, mention it in chat: the repo's convention expects one. If the repo keeps no such records at all, this section is skipped (see above).
 - Add the linked issue or ticket too when one is known or derivable (for a tracker key, its URL only when the repo's docs, template or history show the tracker's base URL — never a guessed one; the bare key is the minimum); that's the minimum, not a requirement to go find one.
 
 ### Link the issues — by target branch
@@ -251,7 +251,7 @@ Short and factual:
 - The PR URL, its title, and `base ← head`.
 - The commits it carries.
 - Which template checkboxes are unticked, and why — so the user can complete them — and which ones the user confirmed having checked.
-- Which `docs/changes/` records you linked, or that the branch touched none.
+- Which work records you linked, that the branch touched none, or that the repo keeps none.
 - The code analyst's verdict and what was shipped knowingly (or that the analysis was skipped, and why).
 - The issues: closed on merge (`Closes`), or marked `Testing: #N` — and, when the repo has no workflow reading it, that the user moves them by hand after the merge.
 - Anything you flagged in Step 1 (uncommitted changes left behind, existing PR).

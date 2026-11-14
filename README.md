@@ -51,7 +51,7 @@ claude --plugin-dir ./plugins/dev-tools
 
 | Skill | O que faz |
 | :--- | :--- |
-| `commit-push` | Cria commits (Conventional Commits) e faz push, seguindo GitFlow |
+| `commit-push` | Cria commits no formato do repositório (Conventional Commits por defeito) e faz push, seguindo GitFlow |
 | `create-pr` | Abre um pull request preenchendo o template do repositório (ou um template por defeito, se não houver); fecha as issues na `main`, marca-as com `Testing: #N` na `develop` |
 | `code-analyst` | Analisa o diff de uma branch com vários agentes especializados em paralelo (só leitura); é chamada pelo `create-pr` |
 | `address-bot-review` | Trata as reviews de um bot num PR: lê todos os findings, analisa, corrige o que é válido e responde finding a finding |
