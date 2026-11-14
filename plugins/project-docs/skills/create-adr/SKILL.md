@@ -10,7 +10,7 @@ An ADR records **why**, not what. The code already says what. If this document c
 
 This writes into the repository (`docs/adr/` or wherever the project keeps them). A decision note for a personal knowledge base's `notes/` folder is a different job — that is `adr-new` in the `knowledge-base` plugin.
 
-Write the ADR without hard line breaks: one paragraph, list item or table row per line, however long.
+Unless the repository's markdown lint requires wrapped lines, write the ADR without hard line breaks: one paragraph, list item or table row per line, however long.
 
 ## Phase 0 — Project conventions
 
@@ -25,7 +25,7 @@ Prefer drafting from the conversation: if the decision was just discussed, draft
 | Input | What it is | Example |
 | :--- | :--- | :--- |
 | **Title** | Short imperative phrase | "Use a managed queue for recurring jobs" |
-| **Status** | Proposed / Accepted / Superseded by NNNN | Accepted |
+| **Status** | The values the project's own template uses; by default Proposed / Accepted / Superseded by NNNN | Accepted |
 | **Context** | The forces that made a decision necessary | "jobs must survive a restart and be re-runnable by an operator" |
 | **Decision** | What was chosen | — |
 | **Consequences** | What this buys and what it costs — **both** | — |
@@ -35,7 +35,7 @@ Do not fabricate a rationale, and do not pad "Consequences" with only the positi
 
 ## Phase 2 — Find where ADRs live
 
-1. `Glob` for `**/adr/*.md`, `**/adrs/*.md`, `**/decisions/*.md`, `**/architecture/decisions/*.md` and `docs/**/0*.md`.
+1. `Glob` for `**/adr/*.md`, `**/adrs/*.md`, `**/decisions/*.md`, `**/architecture/decisions/*.md` and `docs/**/0*.md`, leaving out knowledge-base folders (`wiki/`, `notes/`), and keep only files whose content looks like an ADR (Status, Context, Decision headings).
 2. If a folder is found, use it. If several, ask which.
 3. If none exists, propose `docs/adr/` (or the path the project's documentation index implies) and say so before creating it.
 4. Find the numbering the existing files use (usually a four-digit `NNNN` prefix) and take the highest one, ignoring any `0000-template.md`. The next number is that plus one, in the same width. If the folder is empty, start at `0001`.
@@ -43,8 +43,8 @@ Do not fabricate a rationale, and do not pad "Consequences" with only the positi
 
 ## Phase 3 — Write it
 
-1. Read the project's template (`0000-template.md` or similar) if it exists and follow its exact section structure. If there is none, create one first, with these sections: Status, Context, Decision, Consequences, Alternatives considered.
-2. Write `{NNNN}-{slug}.md`.
+1. Read the project's template (`0000-template.md` or similar) if it exists and follow its exact section structure. If there is none, create one first, with these sections: Status, Context, Decision, Consequences, Alternatives considered — with headings translated into the ADR language.
+2. Write the file following the existing filename pattern (`NNNN-slug.md`, `adr-NNNN-slug.md`, date-prefixed…); only when there is none, default to `NNNN-slug.md`.
 3. Cite real evidence — file paths, config keys, migration names — the way the existing ADRs do. Verify each one with `Read` or `Grep` before writing it down.
 4. **Never cite a line number.** Line numbers move; the file path and the symbol name do not.
 5. Where something is genuinely unknown, write `TODO:` and say what is needed. An honest gap is worth more than a confident guess.
@@ -52,12 +52,12 @@ Do not fabricate a rationale, and do not pad "Consequences" with only the positi
 
 ## Phase 4 — Index it
 
-Find the file holding the ADR index — usually the documentation tree's `README.md` or an `adr/README.md`. Append one row. Do not reorder, reword or reformat the rows already there, and edit nothing else in that file.
+Find the file holding the ADR index — usually the documentation tree's `README.md` or an `adr/README.md`. Append one entry in the index's own format (table row or list item). Do not reorder, reword or reformat the rows already there, and edit nothing else in that file.
 
 If no index exists, say so and offer to start one, rather than inventing a place for it.
 
 ## Phase 5 — Report
 
-Give the new file's path, its number, and the index file you updated.
+Give the new file's path, its number, the index file you updated, and the template if you had to create one.
 
 **Do not run `git add` or `git commit`.** `commit-push` does that.

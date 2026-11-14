@@ -8,7 +8,7 @@ allowed-tools: ["Bash", "Read", "Write", "Edit", "Glob", "Grep", "AskUserQuestio
 
 Documentation rots quietly. This skill moves only what the diff proves has moved, and says so in the changelog — so the next person can tell what was checked from what was merely left alone.
 
-It works on any documentation tree, including one built by `docs-tree`. Write every `.md` you touch without hard line breaks: one paragraph, list item or table row per line.
+It works on any documentation tree, including one built by `docs-tree`. Unless the repository's markdown lint requires wrapped lines, write every `.md` you touch without hard line breaks: one paragraph, list item or table row per line.
 
 ## Phase 0 — Project conventions
 
@@ -25,6 +25,7 @@ Two modes:
 ```bash
 git status --short
 git diff <base>...HEAD --name-only
+git diff HEAD --name-only     # uncommitted work counts as scope too: this skill usually runs before commit-push
 ```
 
 Use the repository's real base branch, from its branching docs or `git branch -r`. Compare against `origin/<base>`, not a stale local copy. Ask if it is unclear.
@@ -43,7 +44,7 @@ Discover the documentation layout first (`Glob` for `docs/**/*.md`, `doc/`, `wik
 | Auth, permissions, secrets handling, error contract | The security page |
 | Build, pipeline, environment or deploy config | The operations pages and the environment table |
 | Setup steps, scripts, tool versions | The onboarding and run-locally pages, and the README's getting-started |
-| Only tests, formatting or comments | Nothing. Say so |
+| Only tests, formatting or comments | Nothing, apart from the Phase 4 changelog line. Say so |
 
 One change can hit several rows. Update every row it hits, and none that it doesn't.
 
@@ -60,7 +61,7 @@ One change can hit several rows. Update every row it hits, and none that it does
 
 ## Phase 4 — Changelog
 
-If the documentation keeps a changelog, append one entry to its unreleased section, naming the sections you updated and the files that forced it. If nothing needed updating, still add a line saying the diff was reviewed and found not to affect the documentation — a silent skip is indistinguishable from a skill that never ran.
+If the documentation keeps a changelog, append one entry to its unreleased section (or, if it has none, a dated entry at the top), naming the sections you updated and the files that forced it. If nothing needed updating, still add a line saying the diff was reviewed and found not to affect the documentation — a silent skip is indistinguishable from a skill that never ran.
 
 If it keeps none, say so in the report and offer to start one; don't create it unasked.
 
