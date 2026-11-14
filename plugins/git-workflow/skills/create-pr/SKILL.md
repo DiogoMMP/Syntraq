@@ -71,7 +71,7 @@ The PR body must describe **the whole branch**, not just the last commit. Read e
 - **No `develop` on the remote** (GitHub flow — check `git ls-remote --heads origin develop`): every work branch targets the repo's default branch (`gh repo view --json defaultBranchRef -q .defaultBranchRef.name`); say so in the gate.
 - Confirm the resolved base in the gate at Step 5 — **never guess it silently**.
 - For a `bugfix/*`, find the parent release branch (`git branch -r --contains` on the merge base, or ask) instead of defaulting to `develop`.
-- If the branch's slug leads with a number (`feature/12-dark-mode`), treat `12` as a GitHub issue and link it. This is a convenience, not a requirement — most personal-project branches carry no issue number, and that's fine; never ask the user to supply one just to fill this in.
+- If the branch's slug leads with a number (`feature/12-dark-mode`), treat `12` as a GitHub issue and link it. If it carries a tracker key instead (`feature/ABC-123`, `bugfix/ABC-123-fix-login`), that key is the ticket: take the pattern from the repo's real branch names, its `AGENTS.md`/`CLAUDE.md`/`CONTRIBUTING.md` and its PR template. This is a convenience, not a requirement — many branches carry no reference, and that's fine; never ask the user to supply one just to fill this in, and never invent one. If the repo's own rules require a ticket on every PR and the branch has none, ask for it once.
 
 ---
 
@@ -120,7 +120,7 @@ Then `cat` it and treat its content as the **skeleton you must fill in**:
 
 ## Step 4 — Compose the title and body
 
-**Title** — Conventional Commits shape: `fix(auth): reject forged logout navigations`. Check whether this change has an associated GitHub issue — derived from the branch slug (e.g. `feature/12-dark-mode` → `#12`) or mentioned anywhere in the conversation. **If one exists, it must be referenced** — in the title (`(#12)`) or, failing that, in the body; don't drop a known issue silently. Only the *absence* of one is fine to leave as-is: never ask the user to open an issue just to have something to reference. If the template's own checklist names a title pattern (e.g. `[tipo]: descrição curta`), follow **that** pattern instead. Imperative mood, no trailing period, ≤ 72 chars.
+**Title** — Conventional Commits shape: `fix(auth): reject forged logout navigations`. Check whether this change has an associated issue or ticket — derived from the branch name (e.g. `feature/12-dark-mode` → `#12`, `feature/ABC-123` → `ABC-123`) or mentioned anywhere in the conversation. **If one exists, it must be referenced** — in the title (`(#12)`, `(ABC-123)`) or, failing that, in the body; don't drop a known one silently. If the repo's own rules or history put the key in a fixed place in the title (`ABC-123: …`, `[ABC-123] …`), follow that. Only the *absence* of one is fine to leave as-is: never ask the user to open an issue just to have something to reference. If the template's own checklist names a title pattern (e.g. `[tipo]: descrição curta`), follow **that** pattern instead. Imperative mood, no trailing period, ≤ 72 chars.
 
 **Body language — Portuguese by default.** Write every word you add in Portuguese (pt-PT), regardless of the language of the chat, of the commit messages, or of the code — that's the default for this user's personal projects. **Exception:** if the template you found in Step 3 is itself clearly written in another language (fixed headings and prose, not just placeholders), follow the template's own language instead so the body doesn't mix languages with its fixed text. Never produce a mixed-language body (an English *Summary* under `## 📋 Descrição` is wrong).
 
@@ -139,7 +139,7 @@ If the user explicitly asks for a PR body in another language for a given PR, th
 
 ### Link the `docs/changes/` records — always
 
-This project records work as Markdown under `docs/changes/` (kept separate from any `docs/wiki/` or `docs/notes/` personal knowledge base the project might also have — see `spec-change` and `implement-change`). Every such record the branch **adds or modifies** must be linked from the PR body, so a reviewer reaches the reasoning in one click:
+Projects that keep written records of their work usually do it as Markdown under `docs/changes/` (kept separate from any `docs/wiki/` or `docs/notes/` personal knowledge base — see `implement-change`), but some keep the same families directly under `docs/` (`docs/features/`, `docs/bugfixes/`, `docs/hotfixes/`, `docs/fixes/`). **Discover which one this repo uses** (`ls docs/`, its docs index, `AGENTS.md`/`CLAUDE.md`) and use that; the paths in the table and the commands below are written for `docs/changes/` — substitute the repo's own prefix. If the repo keeps no such records, skip this part and say nothing about them in the body. Every such record the branch **adds or modifies** must be linked from the PR body, so a reviewer reaches the reasoning in one click:
 
 | Folder | Record shape |
 | --- | --- |
@@ -168,9 +168,11 @@ Rules:
 - **Link text in the body's language**, and descriptive: the record id plus what it is, not a bare filename.
 - **Only records that exist.** Link exactly what the diff shows; never guess an id, a slug or a date in a filename. Verify each path resolves on disk before writing the link (SC-7 never-invent).
 - **When the branch touches no `docs/changes/` record**, say so in that section in the body's language (e.g. "Sem registos em `docs/changes/` associados a este PR.") — never leave it blank, never fabricate a link to make it look complete. If the change is a defect fix and there is *no* `docs/changes/fixes/` entry, mention it in chat: the repo's convention expects one.
-- Add the linked GitHub issue too when one is known or derivable; that's the minimum, not a requirement to go find one.
+- Add the linked issue or ticket too when one is known or derivable (for a tracker key, its URL only when the repo's docs, template or history show the tracker's base URL — never a guessed one; the bare key is the minimum); that's the minimum, not a requirement to go find one.
 
 ### Link the issues — by target branch
+
+This section is about **GitHub issues**. A tracker key from somewhere else (JIRA `ABC-123`, Linear, …) is not closed or moved by `Closes`/`Testing:` — reference it as in the title and the additional-information section, and let the tracker's own integration act on it, unless the repo's docs or workflows show that its automation reads a keyword for those keys (then write what they say).
 
 Collect the *candidate* issues: the number in the branch slug, any `#N` / issue URL in the commits (`git log origin/<base>..HEAD --format=%B`), in the `docs/changes/` records the branch touches, and in the conversation. Then filter them:
 

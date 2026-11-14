@@ -1,6 +1,6 @@
 ---
 name: commit-push
-description: "Create git commits (and optionally push) following a GitFlow-style branching strategy for personal projects. Checks whether the change warrants a version bump (package.json, a .csproj, pyproject.toml, plugin.json, etc. — skipped entirely when the repo already versions automatically via semantic-release/GitVersion/MinVer/etc.) before writing Conventional Commits messages, ALWAYS shows the full proposed message(s) to the user and waits for explicit validation before committing, and ALWAYS asks separately before pushing. Use whenever the user wants to commit, stage and commit, split work into commits, write a commit message, or push — e.g. 'commit', 'commit this', 'faz commit', 'commit e push', 'commita as alterações', 'push', 'write the commit message', 'guarda isto no git'. Also use when finishing a task and the user asks to save the work to git."
+description: "Create git commits (and optionally push) following a GitFlow-style branching strategy for personal projects. First discovers what commit format the repo actually enforces or uses (commitlint, commitizen, commit-msg hooks, CI and release tooling, written conventions, git history) and follows that, with Conventional Commits only as the fallback. Checks whether the change warrants a version bump (package.json, a .csproj, pyproject.toml, plugin.json, etc. — skipped entirely when the repo already versions automatically via semantic-release/GitVersion/MinVer/etc.) before writing the messages, linking the issue or ticket key (GitHub `#12`, JIRA `ABC-123`, any tracker) when the branch or conversation names one, ALWAYS shows the full proposed message(s) to the user and waits for explicit validation before committing, and ALWAYS asks separately before pushing. Use whenever the user wants to commit, stage and commit, split work into commits, write a commit message, or push — e.g. 'commit', 'commit this', 'faz commit', 'commit e push', 'commita as alterações', 'push', 'write the commit message', 'guarda isto no git'. Also use when finishing a task and the user asks to save the work to git."
 allowed-tools: ["Bash", "AskUserQuestion", "Read", "Grep", "Glob"]
 ---
 
@@ -35,6 +35,28 @@ If there is nothing to commit, say so and stop. Do not invent work.
 
 ---
 
+## Step 1b — Discover which commit format the repo uses
+
+**Never assume a type list.** Before writing any message, find out what this repo accepts. A commit with a type that its `commit-msg` hook or CI rejects is a failed commit, and a type the repo never uses is noise in its changelog. Look in this order — the first sources are *enforced*, the later ones only *conventional*, and a repo may have none of them:
+
+1. **commitlint** — `commitlint.config.{js,cjs,mjs,ts}`, `.commitlintrc{,.json,.yaml,.yml,.js,.cjs}`, or a `"commitlint"` key in `package.json`. Read `rules['type-enum']` and, while there, `scope-enum`, `scope-empty`, `subject-case`, `header-max-length` and `body-max-line-length` — they are enforced too. If it only `extends` a shared preset (e.g. `@commitlint/config-conventional`), read the preset from `node_modules/<preset>/` when present; otherwise use that preset's documented list and say so.
+2. **commitizen** — `.czrc`, `.cz-config.{js,cjs}` (`types: [...]`), `cz.toml`, `.cz.toml`, `[tool.commitizen]` in `pyproject.toml`, or `config.commitizen` in `package.json`.
+3. **Git hooks** — `.pre-commit-config.yaml` (e.g. the `conventional-pre-commit` hook, whose `args` list the allowed types), `.husky/commit-msg`, `.githooks/commit-msg`, `git config core.hooksPath`, `.git/hooks/commit-msg`. Read the script: it may call commitlint or carry its own regex.
+4. **CI and release tooling** — `.github/workflows/*` (e.g. `action-semantic-pull-request` with a `types:` input), `.versionrc*`, `release-please-config.json`, `.releaserc*` / `release.config.*` (semantic-release `releaseRules`).
+5. **Written conventions** — `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `docs/` pages on commits.
+6. **History** — `git log --format=%s -200`, extracting the prefixes actually in use (`git log --format=%s -200 | grep -oE '^[a-z]+(\([^)]*\))?!?:' | sed -E 's/\(.*//; s/!?:$//' | sort | uniq -c | sort -rn`). It confirms the style (scopes? `!` for breaking? language? a ticket key in the subject?) and is the last resort.
+
+Rules:
+
+- An **enforced** list (1–4) is authoritative: use only those types and that shape (header length, scope list, subject case), even when Step 5's defaults would suggest another one. If the change genuinely fits none of them, say so and ask — don't smuggle in an unlisted type.
+- When sources disagree, the enforced one wins; mention the inconsistency once.
+- If the repo doesn't use Conventional Commits at all (history shows another style — ticket-first, free text, gitmoji), follow **that** style instead of forcing `type(scope):`.
+- **Only if nothing at all is found** (no config, no docs, no usable history — e.g. a brand-new repo), fall back to the Conventional Commits defaults in Step 5, and say that's what you're doing.
+
+State in the proposal (Step 6) where the format came from, in one line — e.g. *"Types allowed (commitlint `type-enum`): feat, fix, chore, docs, refactor, test."*
+
+---
+
 ## Step 2 — Validate the branch against GitFlow
 
 | Branch | Pattern | Purpose |
@@ -47,7 +69,7 @@ If there is nothing to commit, say so and stop. Do not invent work.
 | Hotfix | `hotfix/<slug>` | Urgent fixes on top of `main` |
 | Typed work branch | `fix/`, `chore/`, `docs/`, `refactor/`, `test/`, `ci/`, `build/`, `perf/`, `style/`, `revert/` + `<slug>` | The Conventional Commits types used as prefixes; `fix/` is the usual bug-fix branch in repos that don't cut release branches |
 
-A branch may optionally reference a GitHub issue by leading its slug with the number (e.g. `feature/12-dark-mode`) — this is a convenience, never a requirement. Personal projects rarely track every change as an issue; don't ask for one.
+A branch may carry an issue or ticket reference, in whatever form the repo uses: a GitHub issue number leading the slug (`feature/12-dark-mode`), or a tracker key (`feature/ABC-123`, `feature/ABC-123-dark-mode`, `bugfix/ABC-123`). Read the pattern from the repo's real branch names (`git branch -a`, `git log`) and its `AGENTS.md`/`CLAUDE.md`/`CONTRIBUTING.md`; don't impose one. A reference is a convenience, never a requirement by this skill — if the repo's own rules require a key on every branch and this one has none, mention it once; don't block and don't make one up. Many personal projects track no issues at all; don't ask for one.
 
 **The repo's own workflow wins.** If `AGENTS.md` or `CLAUDE.md` describes the branching model (direct commits on `main`, no `develop`, which prefixes exist), follow it over this table — and over the checks below.
 
@@ -124,11 +146,11 @@ Refs: #12
 Co-Authored-By: Claude <model> <noreply@anthropic.com>
 ```
 
-- **type** — Conventional Commits: `feat`, `fix`, `chore`, `docs`, `refactor`. `test`, `perf`, `ci`, `build`, `style` are acceptable extensions when they fit better.
-- **scope** — optional, the code area touched (`auth`, `checkout`, `pipeline`).
+- **type** — **one of the types found in Step 1b**, and only those. The shape above is the default; if Step 1b found another enforced shape (header length, scope list, subject case, a non-Conventional style), that wins. *Fallback only when Step 1b found nothing:* Conventional Commits — `feat`, `fix`, `chore`, `docs`, `refactor`, with `test`, `perf`, `ci`, `build`, `style` as extensions when they fit better.
+- **scope** — optional, the code area touched (`auth`, `checkout`, `pipeline`) — unless the repo's rules require it or restrict it to a `scope-enum`. Not the issue or ticket key.
 - **subject** — imperative mood ("add", not "added"/"adds"), lowercase start, no trailing period, ≤ 72 chars. Describes the change, not the process ("fix null check on cart total", never "changes requested in review").
 - **body** — optional; include it when the *why* isn't obvious from the subject. Explain intent, trade-offs, and anything a reviewer would otherwise have to ask. Skip it for trivial commits.
-- **Refs** — check whether this change has an associated GitHub issue: derivable from the branch name (e.g. `feature/12-dark-mode` → `#12`) or mentioned anywhere in the conversation. **If one exists, it must be referenced** — `Refs: #12`, or `Closes: #12` only if the user says the issue is done; don't drop a known issue silently. Only the *absence* of one is optional to leave as-is — never ask the user to open an issue just to fill this line.
+- **Refs** — check whether this change has an associated issue or ticket, in any tracker: derivable from the branch name (`feature/12-dark-mode` → `#12`, `feature/ABC-123` → `ABC-123`) or mentioned anywhere in the conversation. **If one exists, it must be referenced**, written the way the tracker and the repo write it — `Refs: #12`, `Refs: ABC-123`, or `Closes: …` only if the user says the issue is done; don't drop a known one silently. If the repo's history or rules put the key somewhere else (in the subject, as a prefix), follow that instead of the footer. Only the *absence* of one is optional to leave as-is — never ask the user to open an issue or invent a key just to fill this line.
 - **language** — commit messages in **English** by default, regardless of the chat language — unless the repo's `AGENTS.md`/`CLAUDE.md` names another language for commits, or its `git log` clearly shows one. Then write in that language (types and scopes stay as the repo uses them).
 
 ### The Co-Authored-By trailer — exact rules
