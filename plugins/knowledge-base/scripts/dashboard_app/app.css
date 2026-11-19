@@ -179,7 +179,8 @@ ul.tasks li.done .g { color: var(--ink-3); text-decoration: line-through; }
 .heat i.l4 { background: linear-gradient(135deg, #7C5CFF, #22D3EE); }
 .heat i.fut { visibility: hidden; }
 
-.allok { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 220px; height: calc(100% - 30px); text-align: center; color: var(--good); }
+.card:has(> .allok) { display: flex; flex-direction: column; }
+.allok { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 200px; text-align: center; color: var(--good); }
 .allok svg { width: 96px; height: 96px; filter: drop-shadow(0 0 18px var(--good-bg)); }
 .allok circle { fill: var(--good-bg); stroke: var(--good); stroke-width: 2; }
 .allok path { fill: none; stroke: var(--good); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 44; stroke-dashoffset: 44; animation: tick .7s .15s ease-out forwards; }
