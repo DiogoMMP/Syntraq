@@ -581,6 +581,37 @@ def course_data(kb: Path, area: dict) -> dict:
     return out
 
 
+def deliveries_view(raw, areas: list) -> list:
+    """Work deliveries (data/deliveries.json): each has one or more dated milestones,
+    may belong to an area and may name a folder, and is never an exam."""
+    if not isinstance(raw, list):
+        return []
+    slugs = {}
+    for a in areas:
+        for n in [a["name"]] + list(a.get("aliases") or []):
+            slugs[key(n)] = a["slug"]
+    out = []
+    for d in raw:
+        if not isinstance(d, dict):
+            continue
+        items = d.get("dates")
+        if not isinstance(items, list):
+            items = [{"date": d.get("date"), "label": d.get("label"), "time": d.get("time")}] if d.get("date") else []
+        dates = []
+        for x in items:
+            m = DATE_RE.fullmatch(str(x.get("date") or "").strip()) if isinstance(x, dict) else None
+            if m:
+                dates.append({"label": str(x.get("label") or ""), "date": m.group(1), "time": str(x.get("time") or "")})
+        if not dates:
+            continue
+        dates.sort(key=lambda x: (x["date"], x["time"]))
+        area = str(d.get("area") or "").strip()
+        out.append({"title": str(d.get("title") or "").strip() or "—", "area": slugs.get(key(area), "") if area else "",
+                    "area_name": area, "folder": str(d.get("folder") or "").strip(), "dates": dates,
+                    "note": str(d.get("note") or "").strip(), "source": str(d.get("source") or "").strip()})
+    return out
+
+
 def area_view(area: dict, c: dict, plans: list, kb: Path) -> dict:
     raw_p, wiki_p, out_p = area.get("raw") or [], area.get("wiki") or [], area.get("outputs") or []
     names = {key(n) for n in [area["name"]] + list(area.get("aliases") or [])}
@@ -629,6 +660,7 @@ def area_view(area: dict, c: dict, plans: list, kb: Path) -> dict:
     return {
         "slug": area.get("slug") or slug(area["name"]),
         "name": area["name"], "aliases": area.get("aliases") or [], "archived": bool(area.get("archived")),
+        "no_exams": bool(area.get("no_exams")),
         "raw": raw_p, "wiki": wiki_p, "outputs": out_p,
         "sources": {"total": len(srcs), "compiled": st["compiled"], "pending": st["pending"], "changed": st["changed"]},
         "pending": sorted(({"path": s["path"], "state": s["state"], "mtime": s["mtime"]} for s in srcs if s["state"] != "compiled"),
@@ -741,6 +773,7 @@ def cmd_build(kb: Path) -> Path:
         },
         "areas": areas,
         "plans": plans,
+        "deliveries": deliveries_view(read_json(kb / DASH / "data" / "deliveries.json", []), areas),
         "events": evs[:150],
         "recent": recent_files(c),
         "heat": heat(c, evs),

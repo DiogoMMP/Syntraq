@@ -122,6 +122,13 @@ h2.sec::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .exam .d small { font-size: 14px; -webkit-text-fill-color: var(--ink-2); margin-left: 4px; font-weight: 600; }
 .exam .w { font-size: 13px; color: var(--ink-2); margin-top: 6px; overflow-wrap: anywhere; }
 .exam .src { font-size: 11px; color: var(--ink-3); margin-top: 4px; overflow-wrap: anywhere; }
+.exam .dates { list-style: none; margin: 8px 0 0; padding: 0; font-size: 12px; }
+.exam .dates li { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; border-top: 1px solid var(--line); color: var(--ink-2); }
+.exams.deliveries { grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+.exam .dates li .g { min-width: 0; overflow-wrap: anywhere; }
+.exam .dates li.next { color: var(--ink); font-weight: 600; }
+.exam .dates li.next .small { color: var(--violet); }
+.exam .dates li.past { color: var(--ink-3); text-decoration: line-through; }
 .exam.past .d { background: none; color: var(--ink-3); font-size: 20px; }
 
 .bar { height: 10px; border-radius: 999px; background: var(--track); overflow: hidden; display: flex; gap: 2px; position: relative; }
