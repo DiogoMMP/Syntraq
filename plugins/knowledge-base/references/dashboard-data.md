@@ -21,6 +21,25 @@ The command writes one small file to `.dashboard/data/activity/` and rebuilds `.
 
 Run it once per run, not once per file. Skip it when nothing changed (a dry run, a report that only reads). If the numbers only need refreshing, `python .dashboard/dashboard.py build` rebuilds without logging anything.
 
+## Deliveries
+
+Work that is handed in on a date (a report, a project, an assignment) is not an exam and never goes in a course's `exams`. It lives in `.dashboard/data/deliveries.json`, a list that any skill may add to when a source or the user states a date, and that the user can also tell Claude to change ("a entrega final do Desafio 2 é a 18/12"):
+
+```json
+[
+  { "title": "Relatório final", "area": "Desafio 2", "folder": "raw/Desafio 2/Enunciado",
+    "dates": [{ "label": "Versão beta", "date": "2026-11-28", "time": "23:59" }, { "label": "Entrega final", "date": "2026-12-18" }],
+    "note": "", "source": "user" }
+]
+```
+
+- `title` and at least one entry in `dates` (`YYYY-MM-DD`, optional `time` and `label`) are required; a delivery has as many dated milestones as the work has.
+- `area` is the name or an alias of the area the work belongs to (a course, or a project or challenge that is an area of its own). Leave it out for work that belongs to no area; the page shows it as "Geral".
+- `folder` is optional and names the folder the work lives in (relative to the KB root), when the work has one of its own.
+- Never guess a date: write a delivery only when a document or the user states it, and read the file first so that other entries are kept. Rewrite it as valid UTF-8 JSON.
+
+The page shows deliveries apart from exams: a section in the overview, a section on the page of the area they belong to, and the "next event" tile takes whichever is nearer, the next exam or the next delivery.
+
 ## What not to touch
 
 - `.dashboard/data.js`, `app.js`, `app.css` and `dashboard.py` are generated or copied: never edit them.
