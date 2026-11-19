@@ -70,6 +70,7 @@ Everything else updates itself. If the user asks to "update the dashboard" and n
    - Take the folder level that names one course, project or topic. Under archive nesting (`Arquivo/<year>/<semester>/<course>`), take the course folder, not its ancestors. A shared folder such as `geral/` or `general/` is not an area.
    - Add an area for material in `raw/` that has no wiki folder yet (a new semester's courses), so its pending sources show up. Give it the `wiki` and `outputs` prefixes it will have, following where the KB puts its current courses (`KB_GUIDE.md`'s layout, or the level the other areas use, e.g. `PLNTDIA` while older courses sit under `Arquivo/…`). A prefix that doesn't exist yet is fine: it starts counting when the folder appears.
    - For each area, write `name`, `slug` (lower-case ASCII, e.g. `engcia`; it names its folder under `courses/`, so never change it once set), `aliases` (an acronym, the full name, the plan's label), and the folder prefixes `wiki`, `raw` and `outputs` (relative to `wiki/`, `raw/`, `outputs/`; they may overlap).
+   - Set `no_exams: true` on an area that is graded by delivering work (a project, a challenge, a thesis) and has no exam. The page then never asks for its exam date or offers to map its old exams, and asks for its delivery dates instead.
    - Set `archived: true` when the area sits under an archive folder or its exams are long past. Archived areas get a collapsed "Archive" group in the menu.
 
 7. **Fill the course facts the study skills haven't written yet.** The study skills keep `courses/<slug>/*.json` current from now on (the study plugin's `references/dashboard.md` has the format). This step only seeds what's missing, for every course that has study files: an exams article, a progress record, assessments or a plan that names it. Archived courses included, since their history still shows on their page.
@@ -85,6 +86,7 @@ Everything else updates itself. If the user asks to "update the dashboard" and n
 8. **Plans and extras.**
    - `plans`: list the study plans from the scan whose last day is no more than 14 days before today as `{"path": "outputs/…/plan.md", "label": "<its title>"}`. Team or project plans that aren't for studying stay out. `study-plan` adds new ones itself from now on.
    - `extra`: generic panels for something the KB has that the pages don't cover (a dataset, a reading list, a project with deliverables). Kinds: `{"title", "kind": "stat", "value", "sub"}`, `{"title", "kind": "progress", "value", "total"}`, `{"title", "kind": "list", "items": [...]}`, `{"title", "kind": "table", "columns": [...], "rows": [[...]]}`, each with an optional `note` (give hand-written numbers a dated note). Never add a panel just to fill space.
+   - `deliveries.json` (a list, see [`references/dashboard-data.md`](../../references/dashboard-data.md) "Deliveries"): the dated deliveries of work (reports, projects, assignments) that the sources or the user's own words state, never exams. Write one only when a date is stated; a delivery may belong to an area, name a folder, and have several dated milestones.
    - `missing.json` (a list of `{"area", "kind", "what", "how", "prompt"}`) is for gaps the page can't detect by itself. The page already adds one kind on its own, and skips it when `missing.json` has one of the same `kind` for that area:
      - `exam-date`: a current (not archived) course with no upcoming exam date.
 
@@ -123,7 +125,7 @@ Everything else updates itself. If the user asks to "update the dashboard" and n
 
 ## What the page shows
 
-- **Overview**: the headline numbers, the upcoming exams, next steps, today's plan tasks, the study rhythm (a heat map of days with activity, and the streak), and what's missing.
+- **Overview**: the headline numbers (the next event is the nearest exam or delivery), the upcoming exams and, apart, the upcoming deliveries, next steps, today's plan tasks, the study rhythm (a heat map of days with activity, and the streak), and what's missing.
   - **Next steps** come from simple rules: compile what's pending, train weak topics that weigh a lot when an exam is near, take a mock exam if there was no attempt in a week, map past exams, replan when behind.
   - Each step has a **copy** button with the request to paste into Claude.
 - **One page per course**:

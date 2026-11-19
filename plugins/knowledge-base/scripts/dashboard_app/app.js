@@ -20,7 +20,7 @@
     newF: "novas", changed: "alteradas", lastCompile: "última compilação",
     upcoming: "Próximos exames", nextSteps: "Próximos passos", copy: "Copiar pedido", copied: "Copiado — cola no Claude", todayTasks: "Hoje", nextDay: "Próximo dia de estudo",
     missing: "Em falta", heat: "Ritmo", streak: "dias seguidos", streak1: "dia seguido", less: "menos", more: "mais", nothing: "Nada para mostrar.",
-    priorities: "Prioridades", grades: "Notas estimadas", trend: "tendência", perAttempt: "por tentativa", nextGuess: "próxima ≈", passGrade: "nota de aprovação", rules: "Regras",
+    priorities: "Prioridades", grades: "Notas estimadas", trend: "tendência", perAttempt: "por tentativa", nextGuess: "próxima ≈", passGrade: "nota de aprovação", rules: "Regras", deliveries: "Entregas", delivery: "Entrega", general: "Geral", nextEvent: "Próximo evento", exam: "Exame",
     above: "acima da mínima", partial: "parcial, convertida", below: "abaixo da mínima", attempts: "tentativas", quizzes: "quizzes", material: "Material", plan: "Plano", tasks: "tarefas",
     ahead: "Adiantado", onTrack: "Em dia", behind: "Atrasado", overdue: "por fazer de dias anteriores", planOver: "Plano terminado", notDone: "por fazer",
     compiled: "Compiladas", pending: "Pendentes", newer: "alterada desde a compilação", area: "Área", total: "Total", pendingList: "Por compilar (mais recentes)",
@@ -31,6 +31,7 @@
     filter: "Filtrar…", open: "abrir", obs: "abrir no Obsidian", k: { raw: "raw", wiki: "wiki", note: "nota", output: "output" },
     state: { red: "fraco", yellow: "a melhorar", green: "dominado", none: "sem dados" },
     s: {
+      deliver: function (t) { return "Preparar a entrega «" + t + "»"; }, deliverP: function (t) { return "ajuda-me a preparar a entrega «" + t + "»"; }, dueIn: function (n, l) { return (n === 0 ? "hoje" : "em " + n + (n === 1 ? " dia" : " dias")) + (l ? " · " + l : ""); },
       compileArea: function (n, a) { return "Compilar " + n + (n === 1 ? " fonte de " : " fontes de ") + a; }, compileAreaP: function (a) { return "compila a wiki — começa pelas fontes pendentes de " + a; },
       compileNotes: function (n) { return "Compilar " + n + (n === 1 ? " nota da inbox" : " notas da inbox"); }, compileNotesP: "compila as notas pendentes da wiki",
       lint: "Corrigir a saúde da wiki", lintP: "corre o wiki-lint",
@@ -49,7 +50,7 @@
     newF: "new", changed: "changed", lastCompile: "last compile",
     upcoming: "Upcoming exams", nextSteps: "Next steps", copy: "Copy request", copied: "Copied — paste it to Claude", todayTasks: "Today", nextDay: "Next study day",
     missing: "Missing", heat: "Rhythm", streak: "day streak", streak1: "day streak", less: "less", more: "more", nothing: "Nothing to show.",
-    priorities: "Priorities", grades: "Estimated grades", trend: "trend", perAttempt: "per attempt", nextGuess: "next ≈", passGrade: "pass mark", rules: "Rules",
+    priorities: "Priorities", grades: "Estimated grades", trend: "trend", perAttempt: "per attempt", nextGuess: "next ≈", passGrade: "pass mark", rules: "Rules", deliveries: "Deliveries", delivery: "Delivery", general: "General", nextEvent: "Next event", exam: "Exam",
     above: "above the pass mark", partial: "partial, rescaled", below: "below the pass mark", attempts: "attempts", quizzes: "quizzes", material: "Material", plan: "Plan", tasks: "tasks",
     ahead: "Ahead", onTrack: "On track", behind: "Behind", overdue: "left from earlier days", planOver: "Plan over", notDone: "not done",
     compiled: "Compiled", pending: "Pending", newer: "changed since compiled", area: "Area", total: "Total", pendingList: "To compile (newest)",
@@ -60,6 +61,7 @@
     filter: "Filter…", open: "open", obs: "open in Obsidian", k: { raw: "raw", wiki: "wiki", note: "note", output: "output" },
     state: { red: "weak", yellow: "improving", green: "mastered", none: "no data" },
     s: {
+      deliver: function (t) { return "Prepare the delivery «" + t + "»"; }, deliverP: function (t) { return "help me prepare the delivery «" + t + "»"; }, dueIn: function (n, l) { return (n === 0 ? "today" : "in " + n + (n === 1 ? " day" : " days")) + (l ? " · " + l : ""); },
       compileArea: function (n, a) { return "Compile " + n + (n === 1 ? " source of " : " sources of ") + a; }, compileAreaP: function (a) { return "compile the wiki — start with the pending sources of " + a; },
       compileNotes: function (n) { return "Compile " + n + (n === 1 ? " inbox note" : " inbox notes"); }, compileNotesP: "compile the pending notes into the wiki",
       lint: "Fix the wiki's health", lintP: "run wiki-lint",
@@ -135,6 +137,18 @@
     AREAS.forEach(function (a) { examsOf(a).forEach(function (e) { out.push({ a: a, e: e }); }); });
     return out.sort(function (x, y) { return x.e.date < y.e.date ? -1 : 1; });
   }
+  // Work deliveries are not exams: they have their own dates (several allowed), may belong to an area and may name a folder.
+  function deliveriesOf(a) { return (D.deliveries || []).filter(function (d) { return d.area && d.area === a.slug; }); }
+  function nextDate(d) { return d.dates.filter(function (x) { return diff(x.date) >= 0; })[0] || null; }
+  function upcomingDeliveries(list) { return (list || D.deliveries || []).filter(nextDate).sort(function (p, q) { return nextDate(p).date < nextDate(q).date ? -1 : 1; }); }
+  function deliveryCard(d) {
+    var n = nextDate(d), a = d.area ? areaBySlug(d.area) : null, k = n ? diff(n.date) : 0;
+    var who = a ? a.name : (d.area_name || T.general);
+    var lines = d.dates.map(function (x) { return '<li class="' + (diff(x.date) < 0 ? "past" : x === n ? "next" : "") + '"><span class="g">' + esc(x.label || T.delivery) + '</span><span class="small">' + esc(fmtDate(x.date)) + (x.time ? " · " + esc(x.time) : "") + "</span></li>"; }).join("");
+    var inner = '<div class="d">' + (!n ? "✓" : k === 0 ? esc(T.today) : num(k, 0) + "<small>" + esc(k === 1 ? T.day : T.days) + "</small>") + '</div><div class="w"><b>' + esc(d.title) + "</b> · " + esc(who) + "</div>" +
+      '<ul class="dates">' + lines + "</ul>" + (d.folder ? '<div class="src">' + esc(shortPath(d.folder, 3)) + "</div>" : "") + (d.note ? '<div class="src">' + esc(d.note) + "</div>" : "");
+    return a ? '<a class="exam delivery' + (n ? "" : " past") + '" href="#/uc/' + esc(a.slug) + '">' + inner + "</a>" : '<div class="exam delivery' + (n ? "" : " past") + '">' + inner + "</div>";
+  }
   function isActive(a) { return !a.archived; }
   function topicsOf(a) {
     var em = (a.exam_map && a.exam_map.topics) || [], pr = (a.progress && a.progress.topics) || [], st = {};
@@ -200,8 +214,14 @@
       if (tot.broken_links || tot.not_in_index) out.push({ p: 5, ic: "🩺", t: T.s.lint, why: num(tot.broken_links) + " " + T.broken.toLowerCase() + " · " + num(tot.not_in_index) + " " + T.notInIndex, pr: T.s.lintP });
       (D.plans || []).forEach(function (p) { var s = planState(p); if (!s.over && s.overdue) out.push({ p: 1, ic: "🗓️", t: T.s.replan(s.overdue), why: p.label, pr: T.s.replanP }); });
     }
+    upcomingDeliveries().forEach(function (d) {
+      var n = diff(nextDate(d).date), ar = d.area ? areaBySlug(d.area) : null;
+      if (only ? ar !== only : false) return;
+      if (n <= 14) out.push({ p: 1, ic: "📦", t: T.s.deliver(d.title), why: T.s.dueIn(n, nextDate(d).label), pr: T.s.deliverP(d.title) });
+    });
     AREAS.forEach(function (a) {
       if (only && a !== only) return;
+      if (a.no_exams) return;
       var up = examsOf(a).filter(function (e) { return diff(e.date) >= 0; })[0];
       if (!up) return;
       var n = diff(up.date);
@@ -219,11 +239,16 @@
   }
   function missingList(only) {
     var out = (D.missing || []).filter(function (m) { return !only || !m.area || key(m.area) === key(only.name); }).slice();
-    function kindOf(m) { if (m.kind) return m.kind; var w = key(m.what); return /(exam|exame)/.test(w) && /(date|data)/.test(w) ? "exam-date" : /(pass|m[ií]nima)/.test(w) ? "pass-grade" : ""; }
+    function kindOf(m) { if (m.kind) return m.kind; var w = key(m.what); return /(entrega|deliver)/.test(w) ? "delivery-date" : /(exam|exame)/.test(w) && /(date|data)/.test(w) ? "exam-date" : /(pass|m[ií]nima)/.test(w) ? "pass-grade" : ""; }
     function has(a, kind) { return out.some(function (m) { return m.area && key(m.area) === key(a.name) && kindOf(m) === kind; }); }
     AREAS.forEach(function (a) {
       if (only && a !== only) return;
       if (a.archived) return;
+      if (a.no_exams) {
+        if (isStudyKB() && a.sources.total && !upcomingDeliveries(deliveriesOf(a)).length && !has(a, "delivery-date"))
+          out.push({ area: a.name, kind: "delivery-date", what: (PT ? "Datas de entrega — " : "Delivery dates — ") + a.name, how: PT ? "Diz ao Claude a data (ou as datas) de entrega do trabalho." : "Tell Claude the delivery date (or dates).", prompt: PT ? "as datas de entrega do trabalho de " + a.name + " são …" : "the delivery dates for " + a.name + " are …" });
+        return;
+      }
       var upcoming = examsOf(a).some(function (e) { return diff(e.date) >= 0; });
       if (!upcoming && isStudyKB() && (hasStudy(a) || a.sources.total) && !has(a, "exam-date"))
         out.push({ area: a.name, kind: "exam-date", what: (PT ? "Data do exame — " : "Exam date — ") + a.name, how: PT ? "Corre o study-plan ou diz a data ao Claude." : "Run study-plan or tell Claude the date.", prompt: PT ? "a data do exame de " + a.name + " é …" : "the exam date of " + a.name + " is …" });
@@ -301,8 +326,12 @@
   // ------------------------------------------------------------ pages
   function kpis() {
     var tot = D.totals || {}, up = allExams().filter(function (x) { return diff(x.e.date) >= 0; }), h = '<div class="kpis">';
-    if (up.length) { var x = up[0], n = diff(x.e.date); h += '<a class="kpi" href="#/uc/' + esc(x.a.slug) + '"><div class="l">' + esc(T.nextExam) + '</div><div class="v">' + (n === 0 ? esc(T.today) : num(n, 0) + "<small>" + esc(n === 1 ? T.day : T.days) + "</small>") + '</div><div class="s">' + esc(x.a.name) + " · " + esc(fmtDate(x.e.date)) + "</div></a>"; }
-    else if (isStudyKB()) h += '<div class="kpi dim"><div class="l">' + esc(T.nextExam) + '</div><div class="v">' + esc(T.noExam) + '</div><div class="s">&nbsp;</div></div>';
+    // One "next event" tile: whichever is nearer, the next exam or the next work delivery (the two stay apart in their own sections).
+    var evs = up.slice(0, 1).map(function (x) { return { date: x.e.date, href: "#/uc/" + x.a.slug, kind: T.exam, what: x.a.name }; });
+    upcomingDeliveries().slice(0, 1).forEach(function (d) { var nx = nextDate(d), ar = d.area ? areaBySlug(d.area) : null; evs.push({ date: nx.date, href: ar ? "#/uc/" + ar.slug : "", kind: T.delivery, what: d.title + (nx.label ? " · " + nx.label : "") }); });
+    evs.sort(function (p, q) { return p.date < q.date ? -1 : 1; });
+    if (evs.length) { var ev = evs[0], n = diff(ev.date); h += (ev.href ? '<a class="kpi" href="' + esc(ev.href) + '">' : '<div class="kpi">') + '<div class="l">' + esc(T.nextEvent) + '</div><div class="v">' + (n === 0 ? esc(T.today) : num(n, 0) + "<small>" + esc(n === 1 ? T.day : T.days) + "</small>") + '</div><div class="s">' + esc(ev.kind) + " · " + esc(ev.what) + " · " + esc(fmtDate(ev.date)) + "</div>" + (ev.href ? "</a>" : "</div>"); }
+    else if (isStudyKB()) h += '<div class="kpi dim"><div class="l">' + esc(T.nextEvent) + '</div><div class="v">' + esc(T.noExam) + '</div><div class="s">&nbsp;</div></div>';
     h += '<a class="kpi" href="#/sources"><div class="l">' + esc(T.compiledPct) + '</div><div class="v">' + pct(tot.compiled, tot.sources) + '<small>%</small></div><div class="s">' + num(tot.compiled) + " " + esc(T.of) + " " + num(tot.sources) + (tot.excluded ? " · " + num(tot.excluded) + " " + esc(T.outOfScope) : "") + "</div></a>";
     h += '<a class="kpi" href="#/sources"><div class="l">' + esc(T.toCompile) + '</div><div class="v">' + num((tot.pending || 0) + (tot.changed || 0)) + '</div><div class="s">' + num(tot.pending) + " " + esc(T.newF) + " · " + num(tot.changed) + " " + esc(T.changed) + "</div></a>";
     h += '<a class="kpi" href="#/wiki"><div class="l">' + esc(T.articles) + '</div><div class="v">' + num(tot.articles) + '</div><div class="s">' + (tot.last_compile ? esc(T.lastCompile) + " " + esc(rel(tot.last_compile)) : "&nbsp;") + "</div></a>";
@@ -313,6 +342,8 @@
     var h = kpis();
     var up = allExams().filter(function (x) { return diff(x.e.date) >= 0; });
     if (up.length) h += sec(T.upcoming) + '<div class="exams">' + up.map(function (x) { return examCard(x.a, x.e); }).join("") + "</div>";
+    var dls = upcomingDeliveries();
+    if (dls.length) h += sec(T.deliveries) + '<div class="exams deliveries">' + dls.map(deliveryCard).join("") + "</div>";
     var left = stepsCard(nextSteps());
     var today = (D.plans || []).filter(function (p) { return !planState(p).over; }).map(function (p) { return card(esc(p.label), planBlock(p)); }).join("");
     h += '<div class="grid wide" style="margin-top:24px">' + (left || "") + today + card(esc(T.heat), heatmap(18)) + "</div>";
@@ -326,14 +357,16 @@
     var ex = examsOf(a), tps = topicsOf(a), pl = planFor(a), scale = a.course.grade_scale || 20;
     var h = '<div class="ph"><h1>' + esc(a.name) + "</h1>" + (a.archived ? '<span class="tag">' + esc(T.archive) + "</span>" : "") + ((a.aliases || []).length ? '<div class="sub">' + esc(a.aliases.join(" · ")) + "</div>" : "") + "</div>";
     if (ex.length) h += '<div class="exams">' + ex.map(function (e) { return examCard(a, e); }).join("") + "</div>";
+    var dl = deliveriesOf(a);
+    if (dl.length) h += sec(T.deliveries) + '<div class="exams deliveries">' + dl.map(deliveryCard).join("") + "</div>";
     var cards = "";
     var st = stepsCard(nextSteps(a)); if (st && isActive(a)) cards += st;
     if (tps.length) {
       var t = tps.map(function (t) { var ar = (a.articles || []).filter(function (x) { return key(x.name) === key(t.article || t.name); })[0]; return '<div class="topic"><span class="nm">' + (ar ? artLink({ path: ar.path, name: t.name }) : esc(t.name)) + '</span><span class="small muted">' + esc(t.band || "") + (t.share ? " " + num(t.share) + "%" : "") + "</span>" + stTag(t.state, t.note) + "</div>"; });
       cards += card(esc(T.priorities), t.slice(0, 10).join("") + (t.length > 10 ? "<details><summary>+" + (t.length - 10) + "</summary>" + t.slice(10).join("") + "</details>" : ""));
     }
-    // The course's pass mark is 9.5 on a 0-20 scale unless its rules say otherwise; the minimum for the exam alone can differ and lives in pass_rules.
-    var pass = a.course.pass_grade != null ? a.course.pass_grade : (scale === 20 ? 9.5 : null);
+    // The course's pass mark is 9.5 on a 0-20 scale unless its rules say otherwise (not assumed for work-only areas or areas with no study data); the minimum for the exam alone can differ and lives in pass_rules.
+    var pass = a.course.pass_grade != null ? a.course.pass_grade : (scale === 20 && !a.no_exams && (hasStudy(a) || a.course.grade_scale) ? 9.5 : null);
     var passInfo = (pass != null && !(a.attempts || []).length ? '<p class="small muted" style="margin:6px 0 0">' + esc(T.passGrade) + ": " + grade(pass) + "</p>" : "") +
       (a.course.pass_rules ? '<p class="small muted" style="margin:6px 0 0">' + esc(T.rules) + ": " + esc(a.course.pass_rules) + "</p>" : "");
     if ((a.attempts || []).length) cards += card(esc(T.grades) + ' <span class="muted small">' + num(a.attempts.length) + " " + esc(T.attempts) + (a.quizzes ? " · " + num(a.quizzes) + " " + esc(T.quizzes) : "") + "</span>", spark(a.attempts, scale, pass) + passInfo);
@@ -441,7 +474,7 @@
   function sidebar(route) {
     function a(h, label, cnt) { return '<a href="' + esc(h) + '" class="' + (route === h ? "on" : "") + '">' + label + (cnt != null && cnt !== "" ? '<span class="cnt">' + cnt + "</span>" : "") + "</a>"; }
     var act = AREAS.filter(isActive), arch = AREAS.filter(function (x) { return !isActive(x); });
-    function ucLink(x) { var up = examsOf(x).filter(function (e) { return diff(e.date) >= 0; })[0]; return a("#/uc/" + x.slug, esc(x.name), up ? num(diff(up.date), 0) + "d" : ""); }
+    function ucLink(x) { var up = examsOf(x).filter(function (e) { return diff(e.date) >= 0; })[0], dl = upcomingDeliveries(deliveriesOf(x))[0], at = up ? up.date : dl ? nextDate(dl).date : ""; return a("#/uc/" + x.slug, esc(x.name), at ? num(diff(at), 0) + "d" : ""); }
     var tot = D.totals || {}, gen = String(D.generated || ""), age = gen ? -diff(gen.slice(0, 10)) : 0;
     return '<aside class="side"><div class="brand">' + LOGO + '<div><div class="k">Syntraq</div><div class="n">' + esc(D.kb.name || D.kb.folder) + "</div></div></div>" +
       '<div><input class="search" id="q" placeholder="' + esc(T.search) + '" autocomplete="off"><div class="results" id="qr"></div></div>' +
