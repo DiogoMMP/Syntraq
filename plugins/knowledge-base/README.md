@@ -86,7 +86,7 @@ Monta o dashboard de uma KB em modo research: um `dashboard.html` na raiz que ab
 
 - **Visão geral**: os próximos exames e, à parte, as próximas entregas de trabalhos (com várias datas, de uma UC, de uma pasta ou gerais), próximos passos com um botão para copiar o pedido para o Claude, as tarefas de hoje, um mapa de calor do ritmo de estudo e o que falta;
 - **Uma página por UC**: contagem decrescente, prioridades com links para o Obsidian, notas estimadas com tendência e nota de aprovação, o plano, o material, as fontes e a wiki da UC;
-- **Fontes, Wiki, Outputs e Atividade**.
+- **Fontes, Wiki, Outputs e Atividade**. Nos outputs, o que é de UCs arquivadas fica dobrado num grupo "Arquivo" no fim da página, que se abre com um clique ou ao pesquisar.
 
 Tudo o resto vive em `.dashboard/`, uma pasta que o Obsidian ignora:
 
