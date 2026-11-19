@@ -73,6 +73,12 @@ nav a:hover { background: var(--surface-2); color: var(--ink); }
 nav a.on { background: var(--surface-2); color: var(--ink); box-shadow: inset 3px 0 0 var(--violet); font-weight: 600; }
 nav a .cnt { margin-left: auto; font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 nav details summary { list-style: none; cursor: pointer; }
+details.arch-out { margin-top: 22px; }
+details.arch-out > summary { list-style: none; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); font-weight: 700; }
+details.arch-out > summary::-webkit-details-marker { display: none; }
+details.arch-out > summary::before { content: "▸ "; }
+details.arch-out[open] > summary::before { content: "▾ "; }
+details.arch-out[open] > summary { color: var(--ink); }
 .arch-compact { display: none; }
 nav details summary::-webkit-details-marker { display: none; }
 .side .foot { margin-top: auto; display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: var(--ink-3); }
@@ -153,9 +159,9 @@ td.bc { width: 36%; min-width: 90px; }
 .scroll { overflow-x: auto; }
 
 ul.list { list-style: none; margin: 0; padding: 0; }
-ul.list li { padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 13px; display: flex; gap: 8px; align-items: baseline; min-width: 0; }
+ul.list li { padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 13px; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; min-width: 0; }
 ul.list li:last-child { border-bottom: 0; }
-ul.list .g { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+ul.list .g { flex: 1 1 14ch; min-width: 14ch; overflow-wrap: anywhere; }
 ul.tasks li::before { content: "☐"; color: var(--ink-3); }
 ul.tasks li.done::before { content: "☑"; color: var(--good); }
 ul.tasks li.done .g { color: var(--ink-3); text-decoration: line-through; }
@@ -195,7 +201,7 @@ ul.tasks li.done .g { color: var(--ink-3); text-decoration: line-through; }
 @keyframes tick { to { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) { .allok path { animation: none; stroke-dashoffset: 0; } }
 
-.kind { font-size: 11px; padding: 0 6px; border-radius: 6px; font-weight: 700; flex: none; }
+.kind { font-size: 11px; padding: 0 6px; border-radius: 6px; font-weight: 700; flex: none; max-width: 100%; }
 .k-raw { background: rgba(124, 92, 255, .14); color: var(--violet); }
 .k-wiki { background: rgba(79, 168, 245, .16); color: var(--blue); }
 .k-note { background: var(--warn-bg); color: var(--warn); }

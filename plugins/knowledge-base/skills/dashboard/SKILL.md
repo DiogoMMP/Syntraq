@@ -71,7 +71,7 @@ Everything else updates itself. If the user asks to "update the dashboard" and n
    - Add an area for material in `raw/` that has no wiki folder yet (a new semester's courses), so its pending sources show up. Give it the `wiki` and `outputs` prefixes it will have, following where the KB puts its current courses (`KB_GUIDE.md`'s layout, or the level the other areas use, e.g. `PLNTDIA` while older courses sit under `Arquivo/…`). A prefix that doesn't exist yet is fine: it starts counting when the folder appears.
    - For each area, write `name`, `slug` (lower-case ASCII, e.g. `engcia`; it names its folder under `courses/`, so never change it once set), `aliases` (an acronym, the full name, the plan's label), and the folder prefixes `wiki`, `raw` and `outputs` (relative to `wiki/`, `raw/`, `outputs/`; they may overlap).
    - Set `no_exams: true` on an area that is graded by delivering work (a project, a challenge, a thesis) and has no exam. The page then never asks for its exam date or offers to map its old exams, and asks for its delivery dates instead.
-   - Set `archived: true` when the area sits under an archive folder or its exams are long past. Archived areas get a collapsed "Archive" group in the menu.
+   - Set `archived: true` when the area sits under an archive folder or its exams are long past. Archived areas get a collapsed "Archive" group in the menu, and their outputs are folded into an "Archive" group at the end of the Outputs page.
 
 7. **Fill the course facts the study skills haven't written yet.** The study skills keep `courses/<slug>/*.json` current from now on (the study plugin's `references/dashboard.md` has the format). This step only seeds what's missing, for every course that has study files: an exams article, a progress record, assessments or a plan that names it. Archived courses included, since their history still shows on their page.
    - **`exam-map.json`**: when the course has an exams article (written by `exam-map`) but no file yet, write it from the article's ranking, one row per line, following the study plugin's `references/dashboard.md` for `name`, `article`, `band` and `share`.
@@ -137,7 +137,7 @@ Everything else updates itself. If the user asks to "update the dashboard" and n
   - its sources and its wiki articles.
 - **Sources**: compiled, changed and pending per area, the newest pending files, files gone from `raw/`, and the live-count control.
 - **Wiki**: articles per area, broken links, articles missing from `index.md`, and the notes inbox.
-- **Outputs**: every output grouped by area and purpose folder, as `outputs/README.md` registers them, with type filters and a text filter. Each file opens on click.
+- **Outputs**: every output grouped by area and purpose folder, as `outputs/README.md` registers them, with type filters and a text filter. Each file opens on click. What belongs to archived areas is folded into a closed "Archive" group at the end, which a search or a filter on an archived area opens.
 - **Activity**: the rhythm heat map, what each skill did (from the events), and the files that changed.
 - **Search** in the sidebar finds courses, wiki articles (opened in Obsidian) and outputs.
 

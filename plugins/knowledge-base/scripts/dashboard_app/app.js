@@ -425,6 +425,7 @@
     return '<div class="chips" style="margin-bottom:8px"><button class="btn sm' + (!cur ? " primary" : "") + '" ' + attr + '="">' + esc(allLabel) + " · " + total + "</button>" +
       Object.keys(counts).sort(function (p, q) { return counts[q] - counts[p] || (p < q ? -1 : 1); }).map(function (k) { return '<button class="btn sm' + (cur === k ? " primary" : "") + '" ' + attr + '="' + esc(k) + '">' + esc(k) + " · " + counts[k] + "</button>"; }).join("") + "</div>";
   }
+  function archivedOwner(name) { return !!name && AREAS.some(function (x) { return x.archived && x.name === name; }); }
   function pageOutputs() {
     var c = classifyOutputs(), all = c.files;
     var byFolder = {}; all.forEach(function (x) { byFolder[x.owner] = (byFolder[x.owner] || 0) + 1; });
@@ -439,15 +440,19 @@
       var g = x.owner + "\u0000" + x.purpose;
       (groups[g] = groups[g] || []).push(x.f);
     });
-    var body = Object.keys(groups).sort().map(function (g) {
+    var items = Object.keys(groups).sort().map(function (g) {
       var p = g.split("\u0000"), list = groups[g].sort(function (x, y) { return x.mtime < y.mtime ? 1 : -1; });
-      return card((outFilter.folder ? "" : esc(p[0]) + ' <span class="muted small">/</span> ') + esc(p[1]) + ' <span class="muted small">· ' + list.length + "</span>", (c.regMap[key(p[1])] ? '<p class="small muted" style="margin:0 0 8px">' + esc(c.regMap[key(p[1])]) + "</p>" : "") +
-        '<ul class="list">' + list.slice(0, 15).map(function (f) { return '<li><span class="kind k-output">' + esc(f.type || f.ext) + '</span><span class="g"><a class="link" href="' + esc(href("outputs/" + f.path)) + '">' + esc(f.title || base(f.path)) + '</a></span><span class="small muted">' + (f.version ? "v" + esc(f.version) + " · " : "") + esc(rel(f.mtime)) + "</span></li>"; }).join("") + "</ul>" + (list.length > 15 ? "<details><summary>+" + (list.length - 15) + '</summary><ul class="list">' + list.slice(15).map(function (f) { return '<li><span class="kind k-output">' + esc(f.type || f.ext) + '</span><span class="g"><a class="link" href="' + esc(href("outputs/" + f.path)) + '">' + esc(f.title || base(f.path)) + '</a></span><span class="small muted">' + esc(rel(f.mtime)) + "</span></li>"; }).join("") + "</ul></details>" : ""));
-    }).join("");
+      return { arch: archivedOwner(p[0]), html: card((outFilter.folder ? "" : esc(p[0]) + ' <span class="muted small">/</span> ') + esc(p[1]) + ' <span class="muted small">· ' + list.length + "</span>", (c.regMap[key(p[1])] ? '<p class="small muted" style="margin:0 0 8px">' + esc(c.regMap[key(p[1])]) + "</p>" : "") +
+        '<ul class="list">' + list.slice(0, 15).map(function (f) { return '<li><span class="kind k-output">' + esc(f.type || f.ext) + '</span><span class="g"><a class="link" href="' + esc(href("outputs/" + f.path)) + '">' + esc(f.title || base(f.path)) + '</a></span><span class="small muted">' + (f.version ? "v" + esc(f.version) + " · " : "") + esc(rel(f.mtime)) + "</span></li>"; }).join("") + "</ul>" + (list.length > 15 ? "<details><summary>+" + (list.length - 15) + '</summary><ul class="list">' + list.slice(15).map(function (f) { return '<li><span class="kind k-output">' + esc(f.type || f.ext) + '</span><span class="g"><a class="link" href="' + esc(href("outputs/" + f.path)) + '">' + esc(f.title || base(f.path)) + '</a></span><span class="small muted">' + esc(rel(f.mtime)) + "</span></li>"; }).join("") + "</ul></details>" : "")) };
+    });
+    // What belongs to an archived area is folded away, so nothing that is already over shows first; a search or a filter on such an area opens it.
+    var body = items.filter(function (x) { return !x.arch; }).map(function (x) { return x.html; }).join(""), old = items.filter(function (x) { return x.arch; });
+    var oldOpen = !!outFilter.q || archivedOwner(outFilter.folder);
     return '<div class="ph"><h1>' + esc(T.outputs) + '</h1><span class="sp"></span><input class="search" style="max-width:260px" id="ofilter" placeholder="' + esc(T.filter) + '" value="' + esc(outFilter.q) + '"></div>' +
       '<div class="small muted" style="margin-bottom:4px">' + esc(T.folder) + "</div>" + chipRow("data-ofolder", outFilter.folder, byFolder, T.allFolders, all.length) +
       '<div class="small muted" style="margin-bottom:4px">' + esc(T.kindL) + "</div>" + chipRow("data-otype", outFilter.type, byType, T.allTypes, inFolder.length) +
-      '<div class="grid wide" style="margin-top:14px">' + (body || card("", '<p class="muted small">' + esc(T.nothing) + "</p>")) + "</div>";
+      '<div class="grid wide" style="margin-top:14px">' + (body || (old.length ? "" : card("", '<p class="muted small">' + esc(T.nothing) + "</p>"))) + "</div>" +
+      (old.length ? '<details class="arch-out"' + (oldOpen ? " open" : "") + "><summary>" + esc(T.archive) + " · " + old.length + '</summary><div class="grid wide" style="margin-top:12px">' + old.map(function (x) { return x.html; }).join("") + "</div></details>" : "");
   }
   function pageActivity() {
     var ev = (D.events || []).map(function (e) { return { date: e.date, time: e.time, kind: "skill", label: e.skill, text: e.summary + (e.area ? " · " + e.area : "") }; });
